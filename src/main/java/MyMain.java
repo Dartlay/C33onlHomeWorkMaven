@@ -1,7 +1,5 @@
-import org.example.dom.DOMParserExample;
-import org.example.sax.SAXParserExample;
-import org.example.stax.SATXParserExample;
-import org.homework.StAXSonnetParser;
+import org.homework.ParserSelector;
+import org.homework.stax.StAXSonnetParser;
 
 public class MyMain {
     public static void main(String[] args) {
@@ -22,8 +20,12 @@ public class MyMain {
 
 
         // HomeWork
-        StAXSonnetParser parser = new StAXSonnetParser();
 
+        /*StAXSonnetParser parser = new StAXSonnetParser();
         parser.parseXML("shakespearean.xml");
+        */
+
+        ParserSelector parserSelector = new ParserSelector();
+        parserSelector.selectAndParse();
     }
 }
