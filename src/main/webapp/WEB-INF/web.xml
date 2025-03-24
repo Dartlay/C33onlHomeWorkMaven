@@ -6,10 +6,11 @@
          version="5.0"
          metadata-complete="false">
 
-    <!-- 1. WelcomeFile (index.html) -->
+    <!-- 1. WelcomeFile -->
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
     <!-- 2. Фильтр для проверки возраста -->
     <filter>
         <filter-name>AgeCheckFilter</filter-name>
@@ -20,6 +21,7 @@
         <url-pattern>/time/*</url-pattern>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
+
     <!-- 3. Сервлеты времени -->
     <servlet>
         <servlet-name>TimeServlet</servlet-name>
@@ -29,13 +31,23 @@
         <servlet-name>TimeServlet</servlet-name>
         <url-pattern>/time/*</url-pattern>
     </servlet-mapping>
+
     <!-- 4. JAX-RS (Jersey) -->
     <servlet>
         <servlet-name>JerseyServlet</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>org.time.controller</param-value>
+            <param-value>
+                org.time.controller,
+                org.time.service
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>
+                org.glassfish.jersey.jackson.JacksonFeature
+            </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
@@ -43,9 +55,21 @@
         <servlet-name>JerseyServlet</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
+
+    <!-- 5. CDI -->
     <listener>
         <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
     </listener>
+
+    <!-- 6. Контекстные параметры -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:application-context.xml
+        </param-value>
+    </context-param>
+
+    <!-- 7. Настройки сессии -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
