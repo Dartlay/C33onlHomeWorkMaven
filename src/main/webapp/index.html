@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Age Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .container { background: #f5f5f5; padding: 20px; border-radius: 5px; }
+        input[type="number"] { width: 100%; padding: 8px; margin: 8px 0; box-sizing: border-box; }
+        button { background: #4CAF50; color: white; padding: 10px 15px; border:
+         none; border-radius: 4px; cursor: pointer; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Age Verification</h1>
+    <p>Please enter your age (1-120 years):</p>
+    <form action="/check-age" method="get">
+        <input type="number" name="age" min="1" max="120" required
+               placeholder="Enter your age">
+        <button type="submit">Verify</button>
+    </form>
+
+    <p id="error-message" class="error"></p>
+</div>
+
+<script>
+    // Client-side validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const ageInput = document.querySelector('input[name="age"]');
+        const errorElement = document.getElementById('error-message');
+        if (!ageInput.value) {
+            errorElement.textContent = "Please enter your age";
+            e.preventDefault();
+        } else if (ageInput.value < 1 || ageInput.value > 120) {
+            errorElement.textContent = "Age must be between 1 and 120";
+            e.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>
