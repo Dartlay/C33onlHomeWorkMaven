@@ -2,39 +2,149 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Age Verification</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
-        .container { background: #f5f5f5; padding: 20px; border-radius: 5px; }
-        input[type="number"] { width: 100%; padding: 8px; margin: 8px 0; box-sizing: border-box; }
-        button { background: #4CAF50; color: white; padding: 10px 15px; border:
-         none; border-radius: 4px; cursor: pointer; }
-        .error { color: red; }
+        /* Base styles */
+        :root {
+            --primary-color: #4CAF50;
+            --error-color: #f44336;
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        p {
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: var(--error-color);
+            margin-top: 15px;
+            font-size: 14px;
+            display: block;
+            min-height: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Age Verification</h1>
-    <p>Please enter your age (1-120 years):</p>
-    <form action="/check-age" method="get">
-        <input type="number" name="age" min="1" max="120" required
-               placeholder="Enter your age">
-        <button type="submit">Verify</button>
-    </form>
+    <p>Please enter your age to continue. You must be 18 or older to access this content.</p>
 
-    <p id="error-message" class="error"></p>
+    <form action="/check-age" method="get">
+        <div class="form-group">
+            <label for="age">Your Age</label>
+            <input type="number" id="age" name="age" min="1" max="120"
+                   required placeholder="Enter your age (1-120)">
+        </div>
+
+        <button type="submit">Verify Age</button>
+
+        <span id="error-message" class="error"></span>
+    </form>
 </div>
 
 <script>
-    // Client-side validation
     document.querySelector('form').addEventListener('submit', function(e) {
-        const ageInput = document.querySelector('input[name="age"]');
+        const ageInput = document.getElementById('age');
         const errorElement = document.getElementById('error-message');
+        errorElement.textContent = '';
+
         if (!ageInput.value) {
             errorElement.textContent = "Please enter your age";
             e.preventDefault();
         } else if (ageInput.value < 1 || ageInput.value > 120) {
-            errorElement.textContent = "Age must be between 1 and 120";
+            errorElement.textContent = "Age must be between 1 and 120 years";
             e.preventDefault();
         }
     });

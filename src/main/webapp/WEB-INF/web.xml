@@ -3,15 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
                              https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
-         version="5.0"
-         metadata-complete="false">
+         version="5.0">
 
-    <!-- 1. WelcomeFile -->
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
-
-    <!-- 2. Фильтр для проверки возраста -->
+    <!-- Фильтр проверки возраста -->
     <filter>
         <filter-name>AgeCheckFilter</filter-name>
         <filter-class>org.time.filter.AgeCheckFilter</filter-class>
@@ -20,9 +14,10 @@
         <filter-name>AgeCheckFilter</filter-name>
         <url-pattern>/time/*</url-pattern>
         <url-pattern>/api/*</url-pattern>
+        <url-pattern>/check-age</url-pattern>
     </filter-mapping>
 
-    <!-- 3. Сервлеты времени -->
+    <!-- Сервлет времени -->
     <servlet>
         <servlet-name>TimeServlet</servlet-name>
         <servlet-class>org.time.controller.TimeServlet</servlet-class>
@@ -32,22 +27,13 @@
         <url-pattern>/time/*</url-pattern>
     </servlet-mapping>
 
-    <!-- 4. JAX-RS (Jersey) -->
+    <!-- JAX-RS -->
     <servlet>
         <servlet-name>JerseyServlet</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>
-                org.time.controller,
-                org.time.service
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>jersey.config.server.provider.classnames</param-name>
-            <param-value>
-                org.glassfish.jersey.jackson.JacksonFeature
-            </param-value>
+            <param-value>org.time.controller</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
@@ -56,20 +42,7 @@
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
-    <!-- 5. CDI -->
-    <listener>
-        <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
-    </listener>
-
-    <!-- 6. Контекстные параметры -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath:application-context.xml
-        </param-value>
-    </context-param>
-
-    <!-- 7. Настройки сессии -->
+    <!-- Сессии -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
