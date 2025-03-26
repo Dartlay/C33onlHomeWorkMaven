@@ -16,22 +16,16 @@ public class DownloadBookServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "File name not specified");
             return;
         }
-
-        // Защита от directory traversal
         String safeFileName = Paths.get(fileName).getFileName().toString();
-
         String booksDir = getServletContext().getRealPath("/books");
         File bookFile = new File(booksDir, safeFileName);
-
         if (!bookFile.exists() || !bookFile.isFile()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Book not found");
             return;
         }
-
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition",
                 "attachment; filename=\"" + safeFileName + "\"");
-
         try (InputStream in = new FileInputStream(bookFile);
              OutputStream out = response.getOutputStream()) {
             byte[] buffer = new byte[4096];
