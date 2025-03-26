@@ -1,25 +1,40 @@
 package com.example.filter;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.Date;
 
+@WebFilter("/*")
 public class RequestLoggingFilter implements Filter {
-
     @Override
     public void init(FilterConfig filterConfig) {
-        System.out.println("DEBUG: RequestLoggingFilter initialized!");
+        System.out.println("[" + new Date() + "] Инициализирован фильтр логирования");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        System.out.println("DEBUG: Filter processing request");
-
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        System.out.println(LocalDateTime.now() + " | Request: " +
-                httpRequest.getMethod() + " " + httpRequest.getRequestURI());
-        chain.doFilter(request, response);
+        String requestInfo = String.format("%s %s%s",
+                httpRequest.getMethod(),
+                httpRequest.getRequestURI(),
+                httpRequest.getQueryString() != null ? "?" + httpRequest.getQueryString() : "");
+
+        System.out.println("[" + new Date() + "] Начало обработки запроса: " + requestInfo);
+
+        long startTime = System.currentTimeMillis();
+        try {
+            chain.doFilter(request, response);
+        } finally {
+            long duration = System.currentTimeMillis() - startTime;
+            System.out.println("[" + new Date() + "] Завершение запроса (" + duration + " мс): " + requestInfo);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("[" + new Date() + "] Фильтр логирования уничтожен");
     }
 }

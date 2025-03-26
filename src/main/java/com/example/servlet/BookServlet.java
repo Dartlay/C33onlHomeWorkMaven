@@ -2,29 +2,31 @@ package com.example.servlet;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.*;
+import javax.servlet.annotation.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+@WebServlet("/book")
 public class BookServlet extends HttpServlet {
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = "/usr/local/tomcat/webapps/ROOT/books/sample.pdf";
-        File file = new File(path);
+        String booksDir = getServletContext().getRealPath("/books");
+        File dir = new File(booksDir);
+        File[] files = dir.listFiles();
 
-        if (!file.exists()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
-        response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=book.pdf");
-
-        try (InputStream in = new FileInputStream(file);
-             OutputStream out = response.getOutputStream()) {
-            byte[] buffer = new byte[4096];
-            int length;
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
+        List<String> bookNames = new ArrayList<>();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    bookNames.add(file.getName());
+                }
             }
         }
+
+        request.setAttribute("books", bookNames);
+        request.getRequestDispatcher("/WEB-INF/views/book.jsp").forward(request, response);
     }
 }
