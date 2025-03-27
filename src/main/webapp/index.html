@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>C33onlHomeWorkMaven</title>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .custom-card {
+            transition: transform 0.3s;
+        }
+        .custom-card:hover {
+            transform: scale(1.05);
+        }
+        footer {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="#">Main</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">О проекте</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Поиск">
+                <button class="btn btn-light" type="submit">Найти</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-4">Добро пожаловать в проект !</h1>
+            <p class="lead">Это демонстрация Bootstrap  в веб-приложении с Maven, Tomcat и Docker.</p>
+            <div class="row row-cols-1 row-cols-md-2 g-4 my-4">
+                <div class="col">
+                    <div class="card custom-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Maven</h5>
+                            <p class="card-text">Управление зависимостями и сборка проекта.</p>
+                            <a href="#" class="btn btn-primary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card custom-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Tomcat</h5>
+                            <p class="card-text">Веб-сервер для запуска приложения.</p>
+                            <a href="#" class="btn btn-primary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Технологии</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Bootstrap 5</li>
+                    <li class="list-group-item">Java</li>
+                    <li class="list-group-item">Docker</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="mt-5">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2023 C33onlHomeWorkMaven. Все права защищены.</p>
+    </div>
+</footer>
+<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
