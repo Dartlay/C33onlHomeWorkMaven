@@ -7,41 +7,97 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #121212;
-            color: #e0e0e0;
+        background-color: #121212;
+        color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+    }
+
+    .description-text {
+
+        color: #ffffff;
+        font-size: 1.1rem;
+
+    }
+
+    ul.description-text li {
+    margin-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid #ff4500;
+   }
+
+.ability-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 1.5rem 0;
+}
+
+.ability-item {
+    color: #f0f0f0;
+    font-size: 1.1rem;
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    border-left: 2px solid #ff4500;
+    transition: all 0.3s ease;
+}
+
+.ability-item::before {
+    content: "🔥";
+    position: absolute;
+    left: 0;
+    top: 0.4rem;
+    filter: hue-rotate(-30deg);
+    animation: flame-flicker 2s infinite alternate;
+}
+
+.ability-item:hover {
+    color: #ffffff;
+    background-color: rgba(255, 69, 0, 0.1);
+    transform: translateX(5px);
+}
+
+@keyframes flame-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+    .flaming-text {
+        color: #ff4500;
+        text-shadow: 0 0 5px #ff8c00,
+                     0 0 10px #ff4500,
+                     0 0 20px #ff2200;
+        animation: flicker 1.5s infinite alternate;
+    }
+
+    @keyframes flicker {
+        0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+            text-shadow: 0 0 5px #ff8c00,
+                         0 0 10px #ff4500,
+                         0 0 20px #ff2200;
         }
-        .carousel-item img {
-            height: 500px;
-            object-fit: cover;
-            filter: brightness(0.8) contrast(1.2);
+        20%, 24%, 55% {
+            text-shadow: none;
+            opacity: 0.7;
         }
-        .navbar, .footer {
-            background-color: #1a1a1a !important;
-            border-bottom: 1px solid #ff4500;
-        }
-        .card {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
-            box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
-        }
-        .btn-danger {
-            background-color: #ff4500;
-            border-color: #ff4500;
-        }
-        .flaming-text {
-            color: #ff4500;
-            text-shadow: 0 0 5px #ff8c00, 0 0 10px #ff4500;
-        }
-        .carousel-control-next-icon, .carousel-control-prev-icon {
-            filter: invert(1) sepia(1) saturate(5) hue-rotate(0deg);
-        }
+    }
+
+    .card {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
+    }
+
+    .carousel-item img {
+        height: 500px;
+        object-fit: cover;
+        filter: brightness(0.8) contrast(1.2);
+    }
     </style>
 </head>
 <body>
 <div class="container my-5">
     <h1 class="text-center mb-5 flaming-text">GHOSTRIDER</h1>
-
-    <!-- Карусель с изображениями -->
     <div id="ghostriderCarousel" class="carousel slide carousel-dark mb-5" data-bs-ride="carousel">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#ghostriderCarousel" data-bs-slide-to="0" class="active"></button>
@@ -70,29 +126,27 @@
             <span class="carousel-control-next-icon"></span>
         </button>
     </div>
-
-    <!-- Описание персонажа -->
     <div class="row">
         <div class="col-md-8 mx-auto">
             <div class="card p-4 mb-5">
                 <h2 class="flaming-text mb-4">Дух мести</h2>
-                <p class="lead">Ghostrider - это сверхъестественное существо, воплощение божественной кары, обреченное охотиться на грешников.</p>
+                <p class="description-text">Ghostrider - это сверхъестественное существо, воплощение божественной кары, обреченное охотиться на грешников.</p>
 
                 <h3 class="mt-4 flaming-text">Происхождение</h3>
-                <p>Изначально Джонни Блейз был каскадером, который продал душу дьяволу, чтобы спасти жизнь своего друга. В результате он стал носителем Духа Мести - Залазара, древнего ангела, который был превращен в демона.</p>
+                <p class="description-text">Изначально Джонни Блейз был каскадером, который продал душу дьяволу, чтобы спасти жизнь своего друга. В результате он стал носителем Духа Мести - Залазара, древнего ангела, который был превращен в демона.</p>
 
                 <h3 class="mt-4 flaming-text">Способности</h3>
-                <ul>
-                    <li>Голова, пылающая адским пламенем</li>
-                    <li>Неуязвимость к большинству видов оружия</li>
-                    <li>Демоническая сила и выносливость</li>
-                    <li>Пенансный взгляд - способность заставить грешников испытать всю боль, которую они причинили другим</li>
-                    <li>Контроль над цепями и огнем</li>
-                    <li>Моторизированный адский транспорт</li>
+                <ul class="ability-list">
+                    <li class="ability-item">Голова, пылающая адским пламенем</li>
+                    <li class="ability-item">Неуязвимость к большинству видов оружия</li>
+                    <li class="ability-item">Демоническая сила и выносливость</li>
+                    <li class="ability-item">Пенансный взгляд - способность заставить грешников испытать всю боль, которую они причинили другим</li>
+                    <li class="ability-item">Контроль над цепями и огнем</li>
+                    <li class="ability-item">Моторизированный адский транспорт</li>
                 </ul>
 
                 <h3 class="mt-4 flaming-text">Темная сторона</h3>
-                <p>Ghostrider существует в постоянной борьбе между человечностью Джонни Блейза и демонической сущностью Залазара. Его миссия - наказывать грешников, но цена этой силы - вечное проклятие.</p>
+                <p class="description-text">Ghostrider существует в постоянной борьбе между человечностью Джонни Блейза и демонической сущностью Залазара. Его миссия - наказывать грешников, но цена этой силы - вечное проклятие.</p>
 
                 <div class="text-center mt-4">
                 </div>
@@ -100,11 +154,9 @@
         </div>
     </div>
 </div>
-
-<!-- Футер -->
 <footer class="footer py-4 mt-5">
     <div class="container text-center">
-        <span class="text-muted">C33onlHomeWorkMaven &copy; 2023 | Ghostrider - Дух Мести</span>
+        <span class="text-muted">Igor Aladov &copy; 2025 | Ghostrider - Дух Мести</span>
     </div>
 </footer>
 
