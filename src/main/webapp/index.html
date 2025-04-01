@@ -6,86 +6,108 @@
     <title>C33onlHomeWorkMaven</title>
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .custom-card {
-            transition: transform 0.3s;
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
         }
-        .custom-card:hover {
-            transform: scale(1.05);
+        .carousel-item img {
+            height: 500px;
+            object-fit: cover;
+            filter: brightness(0.8) contrast(1.2);
         }
-        footer {
-            background-color: #f8f9fa;
-            padding: 20px 0;
+        .navbar, .footer {
+            background-color: #1a1a1a !important;
+            border-bottom: 1px solid #ff4500;
+        }
+        .card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
+        }
+        .btn-danger {
+            background-color: #ff4500;
+            border-color: #ff4500;
+        }
+        .flaming-text {
+            color: #ff4500;
+            text-shadow: 0 0 5px #ff8c00, 0 0 10px #ff4500;
+        }
+        .carousel-control-next-icon, .carousel-control-prev-icon {
+            filter: invert(1) sepia(1) saturate(5) hue-rotate(0deg);
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-        <a class="navbar-brand" href="#">Main</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Главная</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">О проекте</a>
-                </li>
-            </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Поиск">
-                <button class="btn btn-light" type="submit">Найти</button>
-            </form>
-        </div>
-    </div>
-</nav>
 <div class="container my-5">
-    <div class="row">
-        <div class="col-md-8">
-            <h1 class="mb-4">Добро пожаловать в проект !</h1>
-            <p class="lead">Это демонстрация Bootstrap  в веб-приложении с Maven, Tomcat и Docker.</p>
-            <div class="row row-cols-1 row-cols-md-2 g-4 my-4">
-                <div class="col">
-                    <div class="card custom-card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Maven</h5>
-                            <p class="card-text">Управление зависимостями и сборка проекта.</p>
-                            <a href="#" class="btn btn-primary">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card custom-card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Tomcat</h5>
-                            <p class="card-text">Веб-сервер для запуска приложения.</p>
-                            <a href="#" class="btn btn-primary">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
+    <h1 class="text-center mb-5 flaming-text">GHOSTRIDER</h1>
+
+    <!-- Карусель с изображениями -->
+    <div id="ghostriderCarousel" class="carousel slide carousel-dark mb-5" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#ghostriderCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#ghostriderCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#ghostriderCarousel" data-bs-slide-to="2"></button>
+            <button type="button" data-bs-target="#ghostriderCarousel" data-bs-slide-to="3"></button>
+        </div>
+        <div class="carousel-inner rounded-3">
+            <div class="carousel-item active">
+                <img src="images/ghost.jpg" class="d-block w-100" alt="Ghostrider 1">
+            </div>
+            <div class="carousel-item">
+                <img src="images/ghost2.jpg" class="d-block w-100" alt="Ghostrider 2">
+            </div>
+            <div class="carousel-item">
+                <img src="images/ghost3.jpg" class="d-block w-100" alt="Ghostrider 3">
+            </div>
+            <div class="carousel-item">
+                <img src="images/ghost4.jpg" class="d-block w-100" alt="Ghostrider 4">
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Технологии</h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Bootstrap 5</li>
-                    <li class="list-group-item">Java</li>
-                    <li class="list-group-item">Docker</li>
+        <button class="carousel-control-prev" type="button" data-bs-target="#ghostriderCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#ghostriderCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+
+    <!-- Описание персонажа -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card p-4 mb-5">
+                <h2 class="flaming-text mb-4">Дух мести</h2>
+                <p class="lead">Ghostrider - это сверхъестественное существо, воплощение божественной кары, обреченное охотиться на грешников.</p>
+
+                <h3 class="mt-4 flaming-text">Происхождение</h3>
+                <p>Изначально Джонни Блейз был каскадером, который продал душу дьяволу, чтобы спасти жизнь своего друга. В результате он стал носителем Духа Мести - Залазара, древнего ангела, который был превращен в демона.</p>
+
+                <h3 class="mt-4 flaming-text">Способности</h3>
+                <ul>
+                    <li>Голова, пылающая адским пламенем</li>
+                    <li>Неуязвимость к большинству видов оружия</li>
+                    <li>Демоническая сила и выносливость</li>
+                    <li>Пенансный взгляд - способность заставить грешников испытать всю боль, которую они причинили другим</li>
+                    <li>Контроль над цепями и огнем</li>
+                    <li>Моторизированный адский транспорт</li>
                 </ul>
+
+                <h3 class="mt-4 flaming-text">Темная сторона</h3>
+                <p>Ghostrider существует в постоянной борьбе между человечностью Джонни Блейза и демонической сущностью Залазара. Его миссия - наказывать грешников, но цена этой силы - вечное проклятие.</p>
+
+                <div class="text-center mt-4">
+                </div>
             </div>
         </div>
     </div>
 </div>
-<footer class="mt-5">
+
+<!-- Футер -->
+<footer class="footer py-4 mt-5">
     <div class="container text-center">
-        <p class="mb-0">&copy; 2023 C33onlHomeWorkMaven. Все права защищены.</p>
+        <span class="text-muted">C33onlHomeWorkMaven &copy; 2023 | Ghostrider - Дух Мести</span>
     </div>
 </footer>
+
 <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
