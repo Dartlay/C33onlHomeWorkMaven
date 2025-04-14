@@ -1,17 +1,11 @@
 package org.example.pattern;
 
-/**
- * Реализация паттерна Proxy (Заместитель)
- * Позволяет подставлять вместо реальных объектов специальные объекты-заменители.
- * В примере используется для контроля доступа к животным в зоопарке.
- */
 
-// Интерфейс животного
 interface Proxy {
     void display();
 }
 
-// Реальное животное
+
 class RealAnimal implements Proxy {
     private String name;
 
@@ -30,7 +24,7 @@ class RealAnimal implements Proxy {
     }
 }
 
-// Прокси для животного
+
 class AnimalProxy implements Proxy {
     private RealAnimal realAnimal;
     private String name;
@@ -55,13 +49,13 @@ class AnimalProxy implements Proxy {
     }
 }
 
-// Клиентский код
+
 class Zooo {
     public static void main(String[] args) {
         Proxy lion = new AnimalProxy("Lion", "guest");
         Proxy tiger = new AnimalProxy("Tiger", "admin");
 
-        lion.display(); // Access denied
-        tiger.display(); // Loading Tiger from database... Displaying Tiger
+        lion.display();
+        tiger.display();
     }
 }
