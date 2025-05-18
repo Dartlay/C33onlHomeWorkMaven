@@ -50,7 +50,7 @@ public class DataController extends HttpServlet {
         data.put("subjects", subjectDao.findAll());
         data.put("grades", gradeDao.findAll());
         response.setContentType("application/json");
-        response.setHeader("Content-Disposition", "attachment; filename=\"school_data.json\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"student_data.json\"");
         Gson gson = new Gson();
         gson.toJson(data, response.getWriter());
     }
@@ -60,9 +60,9 @@ public class DataController extends HttpServlet {
         List<Subject> subjects = subjectDao.findAll();
         List<Grade> grades = gradeDao.findAll();
         response.setContentType("text/plain");
-        response.setHeader("Content-Disposition", "attachment; filename=\"school_data.txt\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"student_data.txt\"");
         PrintWriter writer = response.getWriter();
-        writer.println("=== SCHOOL MANAGEMENT DATA EXPORT ===");
+        writer.println("=== STUDENT MANAGEMENT DATA EXPORT ===");
         writer.println("Generated: " + new Date());
         writer.println();
         writer.println("===== STUDENTS (" + students.size() + ") =====");

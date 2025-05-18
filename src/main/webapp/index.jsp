@@ -54,7 +54,7 @@
             <div class="px-3 py-4">
                 <div class="sidebar-brand d-flex align-items-center justify-content-center">
                     <i class="fas fa-graduation-cap fa-2x text-white me-2"></i>
-                    <div class="fs-4 fw-bold text-white">SchoolMS</div>
+                    <div class="fs-4 fw-bold text-white">StudentLG</div>
                 </div>
                 <hr class="my-4 text-white">
                 <ul class="nav flex-column">
