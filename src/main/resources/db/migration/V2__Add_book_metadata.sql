@@ -1,0 +1,17 @@
+ALTER TABLE books ADD COLUMN author VARCHAR(100);
+ALTER TABLE books ADD COLUMN description TEXT;
+ALTER TABLE books ADD COLUMN publication_year INTEGER;
+ALTER TABLE books ADD COLUMN language VARCHAR(50);
+ALTER TABLE books ADD COLUMN cover_image_url VARCHAR(255);
+
+CREATE TABLE IF NOT EXISTS genres (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+
+CREATE TABLE IF NOT EXISTS book_genres (
+    book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
+    genre_id INTEGER REFERENCES genres(id) ON DELETE CASCADE,
+    PRIMARY KEY (book_id, genre_id)
+);

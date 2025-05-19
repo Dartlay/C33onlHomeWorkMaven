@@ -5,11 +5,9 @@
          http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
   <display-name>C33onlHomeWorkMaven</display-name>
-
   <listener>
-    <listener-class>com.example.AppInitializer</listener-class>
+    <listener-class>com.example.config.FlywayInitializer</listener-class>
   </listener>
-
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>

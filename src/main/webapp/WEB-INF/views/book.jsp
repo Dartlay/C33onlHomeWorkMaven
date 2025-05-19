@@ -8,36 +8,33 @@
 </head>
 <body>
     <div class="container">
-        <h1>Доступные книги</h1>
-        <c:choose>
-            <c:when test="${not empty books}">
-                <div class="book-list">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Название книги</th>
-                                <th>Действие</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${books}" var="book">
-                                <tr>
-                                    <td>${book}</td>
-                                    <td>
-                                        <a href="${pageContext.request.contextPath}/download-book?file=${book}"
-                                           class="btn download-btn">Скачать</a>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <p class="error">Нет доступных книг для скачивания</p>
-            </c:otherwise>
-        </c:choose>
-        <a href="${pageContext.request.contextPath}/home" class="btn back-btn">На главную</a>
+        <h1>Книги в библиотеке</h1>
+
+        <table class="book-list">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Автор</th>
+                    <th>Год</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach items="${books}" var="book">
+                    <tr>
+                        <td>${book.title}</td>
+                        <td>${book.author}</td>
+                        <td>${book.publicationYear}</td>
+                        <td>
+                            <a href="/download-book?file=${book.filePath}"
+                               class="btn download-btn">Скачать</a>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+
+        <a href="/home" class="btn back-btn">На главную</a>
     </div>
 </body>
 </html>
