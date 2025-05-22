@@ -1,13 +1,17 @@
 package com.tour.service;
 
-import com.tour.model.Tour;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class BookingService {
     private TourService tourService;
 
+    @Autowired
     public void setTourService(TourService tourService) {
         this.tourService = tourService;
     }
+
 
     public boolean bookTour(String tourName) {
         System.out.println("Attempting to book tour: " + tourName);

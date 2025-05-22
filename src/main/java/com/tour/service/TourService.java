@@ -1,11 +1,13 @@
 package com.tour.service;
 
 import com.tour.model.Tour;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class TourService {
     private List<Tour> availableTours;
 
