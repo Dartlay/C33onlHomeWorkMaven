@@ -30,7 +30,10 @@ public class TourService {
 
     public boolean addTour(Tour newTour) {
         if (newTour == null || newTour.getName() == null || newTour.getName().trim().isEmpty()) {
-            return false;
+            throw new IllegalArgumentException("Tour name cannot be null or empty");
+        }
+        if (newTour.getPrice() <= 0) {
+            throw new IllegalArgumentException("Tour price must be positive");
         }
         return availableTours.add(newTour);
     }

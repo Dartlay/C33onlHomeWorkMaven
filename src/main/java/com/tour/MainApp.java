@@ -16,7 +16,11 @@ public class MainApp {
         bookingService.displayAvailableTours();
         bookingService.bookTour("Paris Adventure");
         bookingService.bookTour("Unknown Tour");
-
+        try {
+            tourService.addTour(new com.tour.model.Tour("", -100.0));
+        } catch (Exception e) {
+            System.out.println("Caught exception: " + e.getMessage());
+        }
         tourService.addTour(new com.tour.model.Tour("African Safari", 1999.99));
         System.out.println("\nAfter adding new tour:");
         bookingService.displayAvailableTours();
