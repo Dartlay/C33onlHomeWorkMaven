@@ -1,0 +1,40 @@
+<th:block th:insert="~{fragments/header :: header}"></th:block>
+
+<div class="container">
+    <div class="d-flex justify-content-between mb-4">
+        <h2>Users List</h2>
+        <a href="/users/new" class="btn btn-success">Add New User</a>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Login</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.login}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${#temporals.format(user.createdAt, 'dd-MM-yyyy HH:mm')}"></td>
+            <td>
+                <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-warning">Edit</a>
+                <a th:href="@{/users/delete/{id}(id=${user.id})}"
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

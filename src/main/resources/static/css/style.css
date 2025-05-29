@@ -1,0 +1,20 @@
+body {
+    padding-bottom: 50px;
+}
+
+.table {
+    margin-top: 20px;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.invalid-feedback {
+    display: block;
+}
+
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+}
