@@ -4,11 +4,14 @@ public class Tour {
     private String name;
     private double price;
 
+    public Tour() {
+
+    }
+
     public Tour(String name, double price) {
         this.name = name;
         this.price = price;
     }
-
 
     public String getName() {
         return name;
@@ -29,8 +32,8 @@ public class Tour {
     @Override
     public String toString() {
         return "Tour{" +
-                "Name : '" + name + '\'' +
-                ", Price : " + price +
+                "name='" + name + '\'' +
+                ", price=" + price +
                 '}';
     }
 }

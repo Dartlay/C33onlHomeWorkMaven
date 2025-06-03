@@ -1,11 +1,14 @@
 package com.tour.service;
 
-import com.tour.model.Tour;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class BookingService {
-    private TourService tourService;
 
-    public void setTourService(TourService tourService) {
+    private final TourService tourService;
+
+    public BookingService(TourService tourService) {
         this.tourService = tourService;
     }
 
