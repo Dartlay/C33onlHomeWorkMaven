@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student {
+public class Group {
     private int id;
     private String name;
-    private String email;
-    private Group group;
 }

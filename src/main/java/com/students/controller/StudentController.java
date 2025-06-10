@@ -1,62 +1,67 @@
 package com.students.controller;
 
 
+import com.students.model.Group;
 import com.students.model.Student;
+import com.students.service.GroupService;
 import com.students.service.StudentService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
+import java.util.List;
+
 @Controller
 @RequestMapping("/students")
 public class StudentController {
 
-    private final StudentService service;
+    private final StudentService studentService;
+    private final GroupService groupService;
 
-    public StudentController(StudentService service) {
-        this.service = service;
+    public StudentController(StudentService studentService, GroupService groupService) {
+        this.studentService = studentService;
+        this.groupService = groupService;
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("students", service.getAll());
-        return "list";
-    }
+    public String getStudentsByGroup(@RequestParam(required = false, defaultValue = "1") int groupId,
+                                     @RequestParam(required = false, defaultValue = "name") String sort,
+                                     Model model) {
 
-    @GetMapping("/add")
-    public String addForm(Model model) {
-        model.addAttribute("student", new Student());
-        return "add";
+        List<Student> students = studentService.getStudentsByGroup(groupId);
+
+        Comparator<Student> comparator = switch (sort) {
+            case "email" -> Comparator.comparing(Student::getEmail);
+            case "name" -> Comparator.comparing(Student::getName);
+            default -> Comparator.comparing(Student::getId);
+        };
+
+        students.sort(comparator);
+
+        model.addAttribute("students", students);
+        model.addAttribute("groups", groupService.getAllGroups());
+        model.addAttribute("selectedGroupId", groupId);
+        model.addAttribute("sort", sort);
+
+        return "students";
     }
 
     @PostMapping("/add")
-    public String add(@ModelAttribute Student student) {
-        service.addStudent(student);
-        return "redirect:/students";
+    public String addStudent(@RequestParam String name,
+                             @RequestParam String email,
+                             @RequestParam int groupId) {
+
+        Group group = groupService.getGroupById(groupId);
+        studentService.addStudent(name, email, group);
+
+        return "redirect:/students?groupId=" + groupId;
     }
 
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        service.removeStudent(id);
-        return "redirect:/students";
-    }
-
-    @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Long id, Model model) {
-        Student student = service.getAll().stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (student == null) return "redirect:/students";
-
-        model.addAttribute("student", student);
-        return "edit";
-    }
-
-    @PostMapping("/edit/{id}")
-    public String edit(@PathVariable Long id, @ModelAttribute Student student) {
-        service.updateStudent(id, student);
-        return "redirect:/students";
+    @PostMapping("/delete/{id}")
+    public String deleteStudent(@PathVariable int id,
+                                @RequestParam(required = false, defaultValue = "1") int groupId) {
+        studentService.removeStudent(id);
+        return "redirect:/students?groupId=" + groupId;
     }
 }
