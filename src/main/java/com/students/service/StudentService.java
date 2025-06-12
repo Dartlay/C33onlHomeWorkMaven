@@ -32,4 +32,12 @@ public class StudentService {
     public void removeStudent(int id) {
         students.removeIf(s -> s.getId() == id);
     }
+
+    public void save(Student student) {
+        students.add(student);
+    }
+
+    public List<Student> findAll() {
+        return new ArrayList<>(students);
+    }
 }

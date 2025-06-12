@@ -25,8 +25,16 @@ public class GroupService {
         return groups.get(id);
     }
 
+    public Group getGroupByName(String name) {
+        return groups.values().stream()
+                .filter(g -> g.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
+    }
+
     public void addGroup(String name) {
         groups.put(currentId, new Group(currentId, name));
         currentId++;
     }
+
 }
