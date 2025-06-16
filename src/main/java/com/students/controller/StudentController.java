@@ -143,7 +143,8 @@ public class StudentController {
                 String[] data = line.split(",");
 
                 if (data.length != 3) {
-                    model.addAttribute("message", "Ошибка формата: строка " + lineNum + " должна содержать name, email, group");
+                    model.addAttribute("message", "Ошибка формата: строка " + lineNum +
+                            " должна содержать name, email, group");
                     return "upload";
                 }
 
@@ -152,7 +153,8 @@ public class StudentController {
                 String groupName = data[2].trim();
 
                 if (!name.matches("^[a-zA-Z\\s]+$")) {
-                    model.addAttribute("message", "Ошибка валидации имени (строка " + lineNum + ")");
+                    model.addAttribute("message", "Ошибка валидации имени (строка "
+                            + lineNum + ")");
                     return "upload";
                 }
 
@@ -167,7 +169,8 @@ public class StudentController {
                         .orElse(null);
 
                 if (group == null) {
-                    model.addAttribute("message", "Группа не найдена: " + groupName + " (строка " + lineNum + ")");
+                    model.addAttribute("message", "Группа не найдена: " + groupName +
+                            " (строка " + lineNum + ")");
                     return "upload";
                 }
 
