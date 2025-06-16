@@ -4,6 +4,12 @@ import com.students.model.Group;
 import com.students.model.Student;
 import com.students.service.GroupService;
 import com.students.service.StudentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,16 +17,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 
 @Controller
 @RequestMapping("/students")
+@Tag(name = "Students", description = "Управление студентами и их загрузкой из файлов")
 public class StudentController {
 
     private final StudentService studentService;
@@ -32,18 +36,23 @@ public class StudentController {
     }
 
     @GetMapping
-    public String getStudentsByGroup(@RequestParam(required = false, defaultValue = "1") int groupId,
-                                     @RequestParam(required = false, defaultValue = "name") String sort,
-                                     Model model) {
+    @Operation(summary = "Просмотр студентов по группе", description = "Отображает список студентов с сортировкой")
+    @ApiResponse(responseCode = "200", description = "Успешно загружен список студентов")
+    public String getStudentsByGroup(
+            @Parameter(description = "ID группы", example = "1")
+            @RequestParam(required = false, defaultValue = "1") int groupId,
 
+            @Parameter(description = "Сортировка: name, email, id", example = "name")
+            @RequestParam(required = false, defaultValue = "name") String sort,
+
+            Model model
+    ) {
         List<Student> students = studentService.getStudentsByGroup(groupId);
-
         Comparator<Student> comparator = switch (sort) {
             case "email" -> Comparator.comparing(Student::getEmail);
             case "name" -> Comparator.comparing(Student::getName);
             default -> Comparator.comparing(Student::getId);
         };
-
         students.sort(comparator);
 
         model.addAttribute("students", students);
@@ -55,44 +64,72 @@ public class StudentController {
     }
 
     @PostMapping("/add")
-    public String addStudent(@RequestParam String name,
-                             @RequestParam String email,
-                             @RequestParam int groupId,
-                             Model model) {
+    @Operation(summary = "Добавить студента", description = "Добавляет нового студента в выбранную группу")
+    @ApiResponses({
+            @ApiResponse(responseCode = "302", description = "Редирект на список студентов"),
+            @ApiResponse(responseCode = "200", description = "Ошибка валидации — имя не в латинице")
+    })
+    public String addStudent(
+            @Parameter(description = "Имя студента (только латиница)", required = true)
+            @RequestParam String name,
+
+            @Parameter(description = "Email студента", required = true)
+            @RequestParam String email,
+
+            @Parameter(description = "ID группы", required = true)
+            @RequestParam int groupId,
+
+            Model model
+    ) {
         if (!name.matches("^[a-zA-Z\\s'-]+$")) {
-            model.addAttribute("nameError", "Name must contain only Latin letters," +
-                    "spaces, apostrophes or hyphens");
+            model.addAttribute("nameError", "Name must contain only Latin letters, spaces, apostrophes or hyphens");
             List<Student> students = studentService.getStudentsByGroup(groupId);
             model.addAttribute("students", students);
             model.addAttribute("groups", groupService.getAllGroups());
             model.addAttribute("selectedGroupId", groupId);
             model.addAttribute("sort", "name");
-
             return "students";
         }
 
         Group group = groupService.getGroupById(groupId);
         studentService.addStudent(name, email, group);
-
         return "redirect:/students?groupId=" + groupId;
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteStudent(@PathVariable int id,
-                                @RequestParam(required = false, defaultValue = "1") int groupId) {
+    @Operation(summary = "Удалить студента", description = "Удаляет студента по ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "302", description = "Редирект на обновлённый список студентов")
+    })
+    public String deleteStudent(
+            @Parameter(description = "ID студента", required = true)
+            @PathVariable int id,
+
+            @RequestParam(required = false, defaultValue = "1") int groupId
+    ) {
         studentService.removeStudent(id);
         return "redirect:/students?groupId=" + groupId;
     }
 
     @GetMapping("/upload")
+    @Operation(summary = "Страница загрузки", description = "Возвращает HTML-страницу загрузки студентов")
     public String uploadPage() {
         return "upload";
     }
 
     @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, Model model) {
+    @Operation(summary = "Обработка TXT файла", description = "Загружает студентов из текстового файла")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Файл успешно загружен"),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации или формате файла")
+    })
+    public String handleFileUpload(
+            @Parameter(description = "TXT файл со студентами", required = true)
+            @RequestParam("file") MultipartFile file,
+            Model model
+    ) {
         if (file.isEmpty()) {
-            model.addAttribute("message", "File not selected It has Latin in it");
+            model.addAttribute("message", "Файл не выбран.");
             return "upload";
         }
 
@@ -106,8 +143,7 @@ public class StudentController {
                 String[] data = line.split(",");
 
                 if (data.length != 3) {
-                    model.addAttribute("message", "Format error: line "
-                            + lineNum + " must contain name, email, and group");
+                    model.addAttribute("message", "Ошибка формата: строка " + lineNum + " должна содержать name, email, group");
                     return "upload";
                 }
 
@@ -116,14 +152,12 @@ public class StudentController {
                 String groupName = data[2].trim();
 
                 if (!name.matches("^[a-zA-Z\\s]+$")) {
-                    model.addAttribute("message", "Validation error: name must contain only " +
-                            "Latin letters (line " + lineNum + ")");
+                    model.addAttribute("message", "Ошибка валидации имени (строка " + lineNum + ")");
                     return "upload";
                 }
 
                 if (email.isEmpty() || !email.contains("@")) {
-                    model.addAttribute("message", "Validation error: invalid email " +
-                            "(line " + lineNum + ")");
+                    model.addAttribute("message", "Неверный email (строка " + lineNum + ")");
                     return "upload";
                 }
 
@@ -133,8 +167,7 @@ public class StudentController {
                         .orElse(null);
 
                 if (group == null) {
-                    model.addAttribute("message", "Group not found: " + groupName + "" +
-                            " (line " + lineNum + ")");
+                    model.addAttribute("message", "Группа не найдена: " + groupName + " (строка " + lineNum + ")");
                     return "upload";
                 }
 
@@ -142,16 +175,19 @@ public class StudentController {
             }
 
         } catch (IOException e) {
-            model.addAttribute("message", "File read error: " + e.getMessage());
+            model.addAttribute("message", "Ошибка чтения файла: " + e.getMessage());
             return "upload";
         }
 
-        model.addAttribute("message", "File successfully uploaded and students added.");
+        model.addAttribute("message", "Файл успешно загружен, студенты добавлены.");
         return "upload";
     }
 
-
     @GetMapping("/download")
+    @Operation(summary = "Скачать студентов", description = "Скачивает список всех студентов в TXT формате")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Файл успешно сгенерирован")
+    })
     public void downloadStudents(HttpServletResponse response) throws IOException {
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition", "attachment;filename=students.txt");
@@ -163,4 +199,3 @@ public class StudentController {
         }
     }
 }
-
