@@ -82,7 +82,8 @@ public class StudentController {
             Model model
     ) {
         if (!name.matches("^[a-zA-Z\\s'-]+$")) {
-            model.addAttribute("nameError", "Name must contain only Latin letters, spaces, apostrophes or hyphens");
+            model.addAttribute("nameError", "Name must contain only Latin letters, spaces, " +
+                    "apostrophes or hyphens");
             List<Student> students = studentService.getStudentsByGroup(groupId);
             model.addAttribute("students", students);
             model.addAttribute("groups", groupService.getAllGroups());
