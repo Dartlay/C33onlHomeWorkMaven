@@ -1,5 +1,6 @@
 package com.students.repository;
 
+import com.students.dto.StudentExportDto;
 import com.students.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -22,4 +23,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     @Query("SELECT s FROM Student s WHERE s.name LIKE %:name%")
     List<Student> searchByName(@Param("name") String name);
+
+    @Query("SELECT new com.students.dto.StudentExportDto(s.name, s.email, g.name) " +
+            "FROM Student s JOIN s.group g")
+    List<StudentExportDto> findAllForExport();
 }

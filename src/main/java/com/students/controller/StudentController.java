@@ -1,5 +1,6 @@
 package com.students.controller;
 
+import com.students.dto.StudentExportDto;
 import com.students.model.Group;
 import com.students.model.Student;
 import com.students.service.GroupService;
@@ -189,16 +190,14 @@ public class StudentController {
 
     @GetMapping("/download")
     @Operation(summary = "Скачать студентов", description = "Скачивает список всех студентов в TXT формате")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Файл успешно сгенерирован")
-    })
     public void downloadStudents(HttpServletResponse response) throws IOException {
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition", "attachment;filename=students.txt");
 
         try (PrintWriter writer = response.getWriter()) {
             for (Student s : studentService.findAll()) {
-                writer.printf("%s, %s, %s%n", s.getName(), s.getEmail(), s.getGroup().getName());
+                String groupName = s.getGroup() != null ? s.getGroup().getName() : "N/A";
+                writer.printf("%s, %s, %s%n", s.getName(), s.getEmail(), groupName);
             }
         }
     }

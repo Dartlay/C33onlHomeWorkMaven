@@ -25,7 +25,12 @@ public class GroupService {
     }
 
     public void addGroup(String name) {
-        groupRepository.save(new Group(0, name));
+        groupRepository.save(
+                Group.builder()
+                        .id(0) // ID 0 для автоинкремента
+                        .name(name)
+                        .build()
+        );
     }
 
     public void deleteGroup(int id) {
