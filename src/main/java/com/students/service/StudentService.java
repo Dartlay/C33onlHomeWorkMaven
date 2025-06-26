@@ -1,43 +1,38 @@
 package com.students.service;
 
+import com.students.dao.StudentDao;
 import com.students.model.Group;
 import com.students.model.Student;
-import com.students.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class StudentService {
-    private final StudentRepository studentRepository;
+    private final StudentDao studentDao;
+    private final GroupService groupService;
 
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
-
-    public void addStudent(String name, String email, Group group) {
-        studentRepository.save(new Student(0, name, email, group));
-    }
-
-    public List<Student> getStudentsByGroup(int groupId) {
-        return studentRepository.findByGroupId(groupId);
-    }
-
-    public void removeStudent(int id) {
-        studentRepository.deleteById(id);
-    }
-
-    public void updateStudentEmail(int id, String email) {
-        studentRepository.updateEmail(id, email);
-    }
-
-    public List<Student> searchStudents(String name) {
-        return studentRepository.searchByName(name);
-    }
-
+    @Transactional(readOnly = true)
     public List<Student> findAll() {
-        return studentRepository.findAll();
+        return studentDao.findAll();
+    }
+
+    @Transactional
+    public void addStudent(String name, String email, Group group) {
+        Student student = new Student(null, name, email, group);
+        studentDao.save(student);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Student> getStudentsByGroup(Long groupId) {
+        return studentDao.findByGroupId(groupId);
+    }
+
+    @Transactional
+    public void removeStudent(Long id) {
+        studentDao.delete(id);
     }
 }

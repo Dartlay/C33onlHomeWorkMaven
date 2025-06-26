@@ -4,6 +4,7 @@ import com.students.model.Group;
 import com.students.model.Student;
 import com.students.service.GroupService;
 import com.students.service.StudentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,58 +18,58 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/students")
+@RequiredArgsConstructor
 public class StudentRestController {
-
     private final StudentService studentService;
     private final GroupService groupService;
 
-    public StudentRestController(StudentService studentService, GroupService groupService) {
-        this.studentService = studentService;
-        this.groupService = groupService;
-    }
-
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents() {
-        List<Student> students = studentService.findAll();
-        return ResponseEntity.ok(students);
+        return ResponseEntity.ok(studentService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<String> addStudent(@RequestBody StudentDto studentDto) {
+    public ResponseEntity<?> addStudent(@RequestBody StudentDto studentDto) {
         Group group = groupService.getGroupById(studentDto.getGroupId());
         if (group == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Group not found");
+            return ResponseEntity.badRequest().body("Group not found");
         }
 
-        studentService.addStudent(studentDto.getName(), studentDto.getEmail(), group);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Student added");
+        try {
+            studentService.addStudent(studentDto.getName(), studentDto.getEmail(), group);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error creating student");
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable int id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.removeStudent(id);
-        return ResponseEntity.ok("Student deleted");
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadStudentsFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadStudentsFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("No file selected");
+            return ResponseEntity.badRequest().body("File is empty");
         }
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
 
-            String line;
-            int lineNum = 0;
+            int lineNumber = 0;
+            int successCount = 0;
+            StringBuilder errors = new StringBuilder();
 
-            while ((line = reader.readLine()) != null) {
-                lineNum++;
+            while (reader.ready()) {
+                lineNumber++;
+                String line = reader.readLine();
                 String[] data = line.split(",");
 
                 if (data.length != 3) {
-                    return ResponseEntity.badRequest()
-                            .body("Error on line " + lineNum + ": format must be 'name,email,group'");
+                    errors.append("Line ").append(lineNumber).append(": Invalid format. Expected name,email,group\n");
+                    continue;
                 }
 
                 String name = data[0].trim();
@@ -76,8 +77,8 @@ public class StudentRestController {
                 String groupName = data[2].trim();
 
                 if (name.isEmpty() || !email.contains("@")) {
-                    return ResponseEntity.badRequest()
-                            .body("Validation error on line " + lineNum + ": empty name or invalid email");
+                    errors.append("Line ").append(lineNumber).append(": Invalid name or email\n");
+                    continue;
                 }
 
                 Group group = groupService.getAllGroups().stream()
@@ -86,20 +87,52 @@ public class StudentRestController {
                         .orElse(null);
 
                 if (group == null) {
-                    return ResponseEntity.badRequest()
-                            .body("Error: group '" + groupName + "' not found (line " + lineNum + ")");
+                    errors.append("Line ").append(lineNumber).append(": Group not found - ").append(groupName).append("\n");
+                    continue;
                 }
 
                 studentService.addStudent(name, email, group);
+                successCount++;
             }
 
-            return ResponseEntity.ok("File processed successfully");
+            String message = String.format("Added %d students", successCount);
+            if (errors.length() > 0) {
+                message += "\nErrors:\n" + errors;
+            }
 
+            return ResponseEntity.ok(message);
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("File read error: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Error processing file");
+        }
+    }
+
+    public static class StudentDto {
+        private String name;
+        private String email;
+        private Long groupId;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public Long getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(Long groupId) {
+            this.groupId = groupId;
         }
     }
 }
-
-

@@ -3,6 +3,7 @@ package com.students.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -10,18 +11,15 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Group {
-    // ... остальные поля
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-    private List<Student> students;
-
-
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Student> students = new ArrayList<>();
 }
