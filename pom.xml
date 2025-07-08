@@ -22,6 +22,7 @@
         <lombok.version>1.18.30</lombok.version>
         <springdoc.version>2.5.0</springdoc.version>
         <jacoco.version>0.8.8</jacoco.version>
+        <hibernate.version>6.4.4.Final</hibernate.version>
     </properties>
 
     <dependencies>
@@ -39,21 +40,24 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- Hibernate ORM -->
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>5.1.0</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
 
+        <!-- Spring ORM (для HibernateTransactionManager) -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
         </dependency>
-        
+
+        <!-- PostgreSQL -->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>6.4.4.Final</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- H2 Database (для тестирования) -->
@@ -144,4 +148,3 @@
         </plugins>
     </build>
 </project>
-

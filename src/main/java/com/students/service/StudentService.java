@@ -15,14 +15,13 @@ public class StudentService {
     private final StudentDao studentDao;
     private final GroupService groupService;
 
-    @Transactional(readOnly = true)
-    public List<Student> findAll() {
-        return studentDao.findAll();
-    }
-
     @Transactional
     public void addStudent(String name, String email, Group group) {
-        Student student = new Student(null, name, email, group);
+        Student student = Student.builder()
+                .name(name)
+                .email(email)
+                .group(group)
+                .build();
         studentDao.save(student);
     }
 
@@ -34,5 +33,10 @@ public class StudentService {
     @Transactional
     public void removeStudent(Long id) {
         studentDao.delete(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Student> findAll() {
+        return studentDao.findAll();
     }
 }

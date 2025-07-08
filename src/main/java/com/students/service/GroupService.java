@@ -2,7 +2,6 @@ package com.students.service;
 
 import com.students.dao.GroupDao;
 import com.students.model.Group;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,15 +12,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GroupService {
     private final GroupDao groupDao;
-
-    @PostConstruct
-    @Transactional
-    public void initGroups() {
-        if (groupDao.findAll().isEmpty()) {
-            groupDao.save(new Group(null, "C33Java", null));
-            groupDao.save(new Group(null, "C34Python", null));
-        }
-    }
 
     @Transactional(readOnly = true)
     public List<Group> getAllGroups() {
@@ -35,7 +25,8 @@ public class GroupService {
 
     @Transactional
     public Group addGroup(String name) {
-        return groupDao.save(new Group(null, name, null));
+        Group group = Group.builder().name(name).build();
+        return groupDao.save(group);
     }
 
     @Transactional

@@ -1,42 +1,58 @@
 package com.students.dao;
 
+import com.students.model.Group;
 import com.students.model.Student;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.criteria.*;
 
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
+@Transactional
 public class StudentDao {
     private final SessionFactory sessionFactory;
 
+    @Autowired
+    public StudentDao(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    private Session getCurrentSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
     public Student save(Student student) {
-        Session session = sessionFactory.getCurrentSession();
-        session.persist(student);
+        getCurrentSession().persist(student);
         return student;
     }
 
     public List<Student> findAll() {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("from Student", Student.class).list();
+        CriteriaBuilder cb = getCurrentSession().getCriteriaBuilder();
+        CriteriaQuery<Student> cq = cb.createQuery(Student.class);
+        Root<Student> root = cq.from(Student.class);
+        cq.select(root);
+        return getCurrentSession().createQuery(cq).getResultList();
     }
 
     public List<Student> findByGroupId(Long groupId) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createQuery(
-                        "from Student where group.id = :groupId", Student.class)
-                .setParameter("groupId", groupId)
-                .list();
+        CriteriaBuilder cb = getCurrentSession().getCriteriaBuilder();
+        CriteriaQuery<Student> cq = cb.createQuery(Student.class);
+        Root<Student> root = cq.from(Student.class);
+
+        Join<Student, Group> groupJoin = root.join("group");
+        cq.where(cb.equal(groupJoin.get("id"), groupId));
+
+        return getCurrentSession().createQuery(cq).getResultList();
     }
 
     public void delete(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        Student student = session.get(Student.class, id);
+        Student student = getCurrentSession().get(Student.class, id);
         if (student != null) {
-            session.remove(student);
+            getCurrentSession().remove(student);
         }
     }
 }
