@@ -1,5 +1,6 @@
 package com.students.controller;
 
+import com.students.exception.DuplicateEmailException;
 import com.students.model.Group;
 import com.students.model.Student;
 import com.students.service.GroupService;
@@ -46,23 +47,32 @@ public class StudentController {
     @PostMapping("/add")
     public String addStudent(
             @RequestParam String name,
+            @RequestParam String surname,
             @RequestParam String email,
+            @RequestParam(required = false, defaultValue = "false") boolean hasPaid,
             @RequestParam Long groupId,
             Model model) {
+        try {
+            if (!name.matches("^[a-zA-Z\\s'-]+$")) {
+                model.addAttribute("nameError", "Invalid name format");
+                return prepareErrorModel(name, surname, email, hasPaid, groupId, model);
+            }
 
-        if (!name.matches("^[a-zA-Z\\s'-]+$")) {
-            model.addAttribute("nameError", "Name must contain only Latin letters");
-            return prepareErrorModel(groupId, model);
+            if (!surname.matches("^[a-zA-Z\\s'-]+$")) {
+                model.addAttribute("surnameError", "Invalid surname format");
+                return prepareErrorModel(name, surname, email, hasPaid, groupId, model);
+            }
+
+            studentService.addStudent(name, surname, email, hasPaid, groupId);
+            return "redirect:/students?groupId=" + groupId;
+
+        } catch (DuplicateEmailException e) {
+            model.addAttribute("emailError", e.getMessage());
+            return prepareErrorModel(name, surname, email, hasPaid, groupId, model);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return prepareErrorModel(name, surname, email, hasPaid, groupId, model);
         }
-
-        Group group = groupService.getGroupById(groupId);
-        if (group == null) {
-            model.addAttribute("error", "Group not found");
-            return prepareErrorModel(groupId, model);
-        }
-
-        studentService.addStudent(name, email, group);
-        return "redirect:/students?groupId=" + groupId;
     }
 
     @PostMapping("/delete/{id}")
@@ -95,25 +105,37 @@ public class StudentController {
             String line;
             int lineNumber = 0;
             int successCount = 0;
+            StringBuilder errors = new StringBuilder();
 
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 String[] data = line.split(",");
 
-                if (data.length != 3) {
-                    model.addAttribute("message",
-                            String.format("Invalid format on line %d. Expected: name,email,group", lineNumber));
-                    return "upload";
+                if (data.length != 5) {
+                    errors.append(String.format("Line %d: Invalid format." +
+                            " Expected: name,surname,email,hasPaid,group%n", lineNumber));
+                    continue;
                 }
 
                 String name = data[0].trim();
-                String email = data[1].trim();
-                String groupName = data[2].trim();
+                String surname = data[1].trim();
+                String email = data[2].trim();
+                boolean hasPaid = Boolean.parseBoolean(data[3].trim());
+                String groupName = data[4].trim();
 
                 if (!name.matches("^[a-zA-Z\\s'-]+$")) {
-                    model.addAttribute("message",
-                            String.format("Invalid name on line %d: %s", lineNumber, name));
-                    return "upload";
+                    errors.append(String.format("Line %d: Invalid name format: %s%n", lineNumber, name));
+                    continue;
+                }
+
+                if (!surname.matches("^[a-zA-Z\\s'-]+$")) {
+                    errors.append(String.format("Line %d: Invalid surname format: %s%n", lineNumber, surname));
+                    continue;
+                }
+
+                if (!email.matches("^[^@]+@[^@]+\\.[^@]+$")) {
+                    errors.append(String.format("Line %d: Invalid email format: %s%n", lineNumber, email));
+                    continue;
                 }
 
                 Group group = groupService.getAllGroups().stream()
@@ -122,17 +144,25 @@ public class StudentController {
                         .orElse(null);
 
                 if (group == null) {
-                    model.addAttribute("message",
-                            String.format("Group not found on line %d: %s", lineNumber, groupName));
-                    return "upload";
+                    errors.append(String.format("Line %d: Group not found: %s%n", lineNumber, groupName));
+                    continue;
                 }
 
-                studentService.addStudent(name, email, group);
-                successCount++;
+                try {
+                    studentService.addStudent(name, surname, email, hasPaid, group.getId());
+                    successCount++;
+                } catch (Exception e) {
+                    errors.append(String.format("Line %d: Error saving student:" +
+                            " %s%n", lineNumber, e.getMessage()));
+                }
             }
 
-            model.addAttribute("message",
-                    String.format("File processed successfully. Added %d students", successCount));
+            String message = String.format("File processed. Added %d students", successCount);
+            if (errors.length() > 0) {
+                message += "<br><br>Errors:<br>"
+                        + errors.toString().replace("\n", "<br>");
+            }
+            model.addAttribute("message", message);
             return "upload";
         }
     }
@@ -160,11 +190,16 @@ public class StudentController {
         };
     }
 
-    private String prepareErrorModel(Long groupId, Model model) {
+    private String prepareErrorModel(String name, String surname,
+                                     String email, boolean hasPaid,
+                                     Long groupId, Model model) {
+        model.addAttribute("nameValue", name);
+        model.addAttribute("surnameValue", surname);
+        model.addAttribute("emailValue", email);
+        model.addAttribute("hasPaidValue", hasPaid);
         model.addAttribute("students", studentService.getStudentsByGroup(groupId));
         model.addAttribute("groups", groupService.getAllGroups());
         model.addAttribute("selectedGroupId", groupId);
-        model.addAttribute("sort", "name");
         return "students";
     }
 }
