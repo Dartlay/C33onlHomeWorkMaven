@@ -1,0 +1,74 @@
+package com.book.controller;
+
+import com.book.model.Book;
+import com.book.model.User;
+import com.book.service.BookService;
+import com.book.service.LibraryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/books")
+@RequiredArgsConstructor
+public class BookController {
+    private final BookService bookService;
+    private final LibraryService libraryService;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir; // Получаем из конфигурации
+
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookService.findAll();
+    }
+
+    @GetMapping("/{id}/read")
+    public ResponseEntity<Resource> readBook(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "1") int page,
+            @AuthenticationPrincipal User user) throws IOException {
+
+        Book book = bookService.findById(id);
+        libraryService.updateReadingProgress(id, user, page);
+
+        Path filePath = Paths.get(uploadDir).resolve(book.getFilePath()).normalize();
+        Resource resource = new UrlResource(filePath.toUri());
+
+        if (!resource.exists()) {
+            throw new RuntimeException("File not found " + book.getFilePath());
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + resource.getFilename() + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<List<Book>> getTop10Books() {
+        return ResponseEntity.ok(bookService.getTop10Books());
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Book addBook(
+            @RequestPart Book book,
+            @RequestPart MultipartFile file,
+            @RequestPart(required = false) MultipartFile cover,
+            @AuthenticationPrincipal User user) throws IOException {
+        return bookService.saveBook(book, file, cover, user);
+    }
+}

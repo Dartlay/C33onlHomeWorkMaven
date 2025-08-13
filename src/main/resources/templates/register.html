@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>iA.Book - Регистрация</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Блокировка скролла */
+        body {
+            overflow: hidden;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        /* Основной контейнер */
+        .main-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* Левая часть - форма */
+        .form-section {
+            position: absolute;
+            width: 720px;
+            height: 100%;
+            left: 0;
+            top: 0;
+            padding: 64px 100px;
+        }
+
+        /* Кнопка Назад */
+        .back-button {
+            position: absolute;
+            top: 64px;
+            left: 100px;
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        /* Логотип */
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+
+        /* Форма */
+        .form-container {
+            width: 528px;
+        }
+
+        /* Поля ввода */
+        .input-field {
+            border-radius: 100px;
+            padding: 12px 20px;
+            height: 50px;
+        }
+
+        /* Кнопка регистрации */
+        .register-btn {
+            border-radius: 100px;
+            height: 50px;
+        }
+
+        /* Правая часть - изображение */
+        .image-section {
+            position: absolute;
+            width: 720px;
+            height: 100%;
+            right: 0;
+            top: 0;
+            background-size: cover;
+            background-position: center;
+            border-radius: 60px 0 0 60px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1200px) {
+            .form-section {
+                padding: 64px 50px;
+            }
+
+            .form-container {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .image-section {
+                display: none;
+            }
+
+            .form-section {
+                width: 100%;
+                padding: 64px 20px;
+            }
+
+            .back-button {
+                left: 20px;
+                top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <!-- Кнопка Назад -->
+    <button class="back-button" onclick="window.location.href='/'">
+        <img th:src="@{/img/vector-10.svg}" alt="Назад" class="me-2" width="20">
+        <span class="fw-medium">Назад</span>
+    </button>
+
+    <!-- Левая часть - форма -->
+    <div class="form-section">
+        <div class="logo">
+            <img th:src="@{/img/vector.svg}" alt="Логотип" class="me-3" width="30">
+            <h1 class="h3 mb-0 fw-bold">iA.Book</h1>
+        </div>
+
+        <!-- Сообщение об ошибке -->
+        <div th:if="${param.error}" class="alert alert-danger mb-4">
+            <div th:text="${errorMessage}">Ошибка регистрации</div>
+        </div>
+
+        <div class="form-container">
+            <!-- Заголовок -->
+            <div class="mb-4">
+                <h2 class="h4 fw-semibold mb-3">Создайте аккаунт</h2>
+                <p class="text-muted">Пожалуйста, заполните все поля для регистрации</p>
+            </div>
+
+            <!-- Форма регистрации -->
+            <form th:action="@{/api/auth/register}" method="post">
+                <!-- Поле логина -->
+                <div class="mb-4">
+                    <label for="username" class="form-label text-muted">Логин</label>
+                    <input type="text" class="form-control input-field"
+                           id="username" name="username" placeholder="Придумайте логин" required>
+                </div>
+
+                <!-- Поле email -->
+                <div class="mb-4">
+                    <label for="email" class="form-label text-muted">Email</label>
+                    <input type="email" class="form-control input-field"
+                           id="email" name="email" placeholder="Ваш email" required>
+                </div>
+
+                <!-- Поле пароля -->
+                <div class="mb-4 position-relative">
+                    <label for="password" class="form-label text-muted">Пароль</label>
+                    <input type="password" class="form-control input-field"
+                           id="password" name="password" placeholder="Придумайте пароль" required>
+                    <span class="position-absolute"
+                          style="right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                        <img th:src="@{/img/eye-disable.svg}" alt="Показать пароль" width="20" id="togglePassword">
+                    </span>
+                </div>
+
+                <!-- Подтверждение пароля -->
+                <div class="mb-4 position-relative">
+                    <label for="confirmPassword" class="form-label text-muted">Подтвердите пароль</label>
+                    <input type="password" class="form-control input-field"
+                           id="confirmPassword" name="confirmPassword" placeholder="Повторите пароль" required>
+                    <span class="position-absolute"
+                          style="right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                        <img th:src="@{/img/eye-disable.svg}" alt="Показать пароль" width="20"
+                             id="toggleConfirmPassword">
+                    </span>
+                </div>
+
+                <!-- Кнопка регистрации -->
+                <button type="submit" class="btn btn-dark w-100 register-btn mb-3">
+                    Зарегистрироваться
+                </button>
+
+                <!-- Ссылка на вход -->
+                <p class="text-muted text-center">
+                    Уже есть аккаунт?
+                    <a th:href="@{/login}" class="text-primary fw-semibold text-decoration-none">Войти</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Правая часть - изображение -->
+    <div class="image-section" style="background-image: url('/img/03-sky-2.png');"></div>
+</div>
+
+<!-- Bootstrap JS + Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Переключение видимости пароля
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const icon = this;
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.src = icon.src.replace('eye-disable.svg', 'eye-close.svg');
+        } else {
+            passwordInput.type = 'password';
+            icon.src = icon.src.replace('eye-close.svg', 'eye-disable.svg');
+        }
+    });
+
+    // Переключение видимости подтверждения пароля
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+        const confirmInput = document.getElementById('confirmPassword');
+        const icon = this;
+        if (confirmInput.type === 'password') {
+            confirmInput.type = 'text';
+            icon.src = icon.src.replace('eye-disable.svg', 'eye-close.svg');
+        } else {
+            confirmInput.type = 'password';
+            icon.src = icon.src.replace('eye-close.svg', 'eye-disable.svg');
+        }
+    });
+
+    // Обработка формы регистрации
+    document.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+            alert('Пароли не совпадают!');
+            return;
+        }
+
+        const formData = {
+            username: document.getElementById('username').value,
+            email: document.getElementById('email').value,
+            password: password
+        };
+
+        fetch('/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw err;
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.token) {
+                    window.location.href = '/register-success';
+                } else {
+                    alert(data.message || 'Регистрация прошла успешно!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message || 'Ошибка регистрации: ' + (error.error || ''));
+            });
+    });
+</script>
+</body>
+</html>
