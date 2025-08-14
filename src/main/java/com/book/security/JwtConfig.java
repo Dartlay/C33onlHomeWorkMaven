@@ -1,4 +1,4 @@
-package com.book.security;
+/* package com.book.security;
 
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,3 +19,5 @@ public class JwtConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterCh
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
+
+ */

@@ -127,18 +127,18 @@ public class WebController {
             return "redirect:/login";
         }
 
-        // Получаем пользователя
+        // Получаем юзера
         User user = userRepository.findByUsername(tokenProvider.getUsernameFromJWT(token))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Получаем книги из библиотеки
+        //  книги из библи
         List<Book> libraryBooks = libraryService.getUserLibrary(user);
 
-        // Добавляем атрибуты в модель
+        // добавляем  в модель
         model.addAttribute("books", libraryBooks);
         model.addAttribute("isAuthenticated", true);
         model.addAttribute("username", user.getUsername());
-        model.addAttribute("token", token); // Добавляем токен в модель
+        model.addAttribute("token", token);
 
         return "library";
     }
@@ -159,9 +159,11 @@ public class WebController {
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             libraryService.addToLibrary(bookId, user);
-            redirectAttributes.addFlashAttribute("success", "Книга добавлена в библиотеку");
+            redirectAttributes.addFlashAttribute("success",
+                    "Книга добавлена в библиотеку");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error",
+                    "Ошибка: " + e.getMessage());
         }
 
         return "redirect:/book";
@@ -174,17 +176,19 @@ public class WebController {
             RedirectAttributes redirectAttributes,
             HttpServletRequest request) {
 
-        // Проверяем, была ли отправлена форма с подтверждением
+        // Проверяем форму
         String confirmParam = request.getParameter("confirm");
         if (confirmParam == null || !confirmParam.equals("true")) {
-            redirectAttributes.addFlashAttribute("error", "Подтверждение не получено");
+            redirectAttributes.addFlashAttribute("error",
+                    "Подтверждение не получено");
             return "redirect:/library";
         }
-
+        // чек на авторизацию
         try {
             String token = (String) session.getAttribute("token");
             if (token == null || !tokenProvider.validateToken(token)) {
-                redirectAttributes.addFlashAttribute("error", "Требуется авторизация");
+                redirectAttributes.addFlashAttribute("error",
+                        "Требуется авторизация");
                 return "redirect:/login";
             }
 
@@ -192,7 +196,8 @@ public class WebController {
                     .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
 
             libraryService.removeFromLibrary(bookId, user);
-            redirectAttributes.addFlashAttribute("success", "Книга успешно удалена из библиотеки");
+            redirectAttributes.addFlashAttribute("success",
+                    "Книга успешно удалена из библиотеки");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
@@ -200,6 +205,7 @@ public class WebController {
         return "redirect:/library";
     }
 
+    // не забудь
     @GetMapping("/top10")
     public String top10Page(HttpSession session, Model model) {
         String token = (String) session.getAttribute("token");
@@ -212,7 +218,7 @@ public class WebController {
             model.addAttribute("username", username);
         }
 
-        List<Book> topBooks = bookService.getRandom10(); // или bookService.getTop10ByRating()
+        List<Book> topBooks = bookService.getRandom10();
         model.addAttribute("books", topBooks);
 
         return "top10";
@@ -220,7 +226,7 @@ public class WebController {
 
     @GetMapping("/newest")
     public String newestPage(HttpSession session, Model model) {
-        // Проверка аутентификации
+        // чек аутентификации
         String token = (String) session.getAttribute("token");
         boolean isAuthenticated = token != null && tokenProvider.validateToken(token);
         model.addAttribute("isAuthenticated", isAuthenticated);
@@ -229,7 +235,6 @@ public class WebController {
             model.addAttribute("username", tokenProvider.getUsernameFromJWT(token));
         }
 
-        // Получаем 10 самых новых книг
         List<Book> newestBooks = bookService.getTop10Newest();
         model.addAttribute("books", newestBooks);
 
@@ -247,20 +252,20 @@ public class WebController {
         try {
             AuthResponse authResponse = authService.login(username, password);
 
-            // 1. Сохраняем в сессию
+            // Сохраняем
             HttpSession session = request.getSession();
             session.setAttribute("token", authResponse.getToken());
             session.setAttribute("username", authResponse.getUsername());
             session.setAttribute("role", authResponse.getRole());
 
-            // 2. Устанавливаем куку
+            //  куку
             Cookie jwtCookie = new Cookie("jwtToken", authResponse.getToken());
             jwtCookie.setPath("/");
             jwtCookie.setHttpOnly(true);
             jwtCookie.setMaxAge(7 * 24 * 60 * 60); // 7 дней
             response.addCookie(jwtCookie);
 
-            // 3. Устанавливаем аутентификацию в SecurityContext
+            //  аутентификация
             Authentication authentication = tokenProvider.getAuthentication(authResponse.getToken());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -276,16 +281,16 @@ public class WebController {
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-        // Очищаем аутентификацию
+        // чистим
         SecurityContextHolder.clearContext();
 
-        // Удаляем сессию
+        // дел
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
 
-        // Удаляем cookie
+        // дел печенюхи
         Cookie jwtCookie = new Cookie("jwtToken", null);
         jwtCookie.setPath("/");
         jwtCookie.setHttpOnly(true);

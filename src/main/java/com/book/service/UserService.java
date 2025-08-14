@@ -38,7 +38,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // Проверки уникальности
+        // проверка уникальности
         if (userRepository.existsByUsernameAndIdNot(userDTO.getUsername(), id)) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -60,7 +60,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // Дополнительные проверки, если нужно
+        // дополнительные проверки
         if (user.getRole() == User.Role.ADMIN) {
             long adminCount = userRepository.countByRole(User.Role.ADMIN);
             if (adminCount <= 1) {

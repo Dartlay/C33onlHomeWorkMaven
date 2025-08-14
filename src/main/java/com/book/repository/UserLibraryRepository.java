@@ -17,7 +17,5 @@ public interface UserLibraryRepository extends JpaRepository<UserLibrary, UserLi
 
     boolean existsByUserAndBook(User user, Book book);
 
-    void deleteByUserAndBook(User user, Book book);
-
 
 }

@@ -13,16 +13,13 @@ import java.util.List;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-    @Query("SELECT b FROM Book b ORDER BY b.uploadedAt DESC LIMIT 10")
-    List<Book> findByAuthorNameContaining(String name);
-
     @Query("SELECT b FROM Book b WHERE " +
             "LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(b.author.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "CAST(b.year AS string) LIKE CONCAT('%', :query, '%')")
     List<Book> searchBooks(@Param("query") String query);
 
-    // Фильтрация по жанру и дате добавления
+    // фильтр
     @Query("SELECT b FROM Book b WHERE " +
             "(:genreId IS NULL OR b.genre.id = :genreId) " +
             "ORDER BY b.title ASC")

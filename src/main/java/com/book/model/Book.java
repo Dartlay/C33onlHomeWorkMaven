@@ -54,7 +54,7 @@ public class Book {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserLibrary> libraries;
 
-    // Helper methods
+    // хелпер
     public int getFavoritesCount() {
         return favorites != null ? favorites.size() : 0;
     }

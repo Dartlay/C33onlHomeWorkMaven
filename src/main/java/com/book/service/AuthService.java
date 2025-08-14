@@ -55,27 +55,27 @@ public class AuthService {
 
     public AuthResponse login(String username, String password) {
         try {
-            // 1. Аутентифицируем пользователя (проверка логина/пароля)
+            // проверка лог и пароля
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
 
-            // 2. Получаем пользователя из БД, чтобы узнать его роль
+            // юзер из бд
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // 3. Создаём новый Authentication с ролями
+            // аутификация с ролями
             List<GrantedAuthority> authorities = Collections.singletonList(
                     new SimpleGrantedAuthority(user.getRole().getAuthority()) // "ROLE_ADMIN"
             );
 
             Authentication newAuth = new UsernamePasswordAuthenticationToken(
-                    user.getUsername(), // principal
-                    null,              // credentials (не нужно, т.к. аутентификация уже прошла)
-                    authorities        // роли пользователя
+                    user.getUsername(), // прицип
+                    null,              //
+                    authorities        // роли
             );
 
-            // 4. Сохраняем в SecurityContext
+            // сохраняем в Security
             SecurityContextHolder.getContext().setAuthentication(newAuth);
 
             logger.info("User logged in successfully: {}", username);
@@ -131,12 +131,14 @@ public class AuthService {
             ResponseEntity<String> response = restTemplate.getForEntity(
                     "https://api.pwnedpasswords.com/range/" + prefix, String.class);
 
-            if (response.getStatusCode() == HttpStatus.OK && response.getBody().contains(suffix)) {
-                throw new PasswordCompromisedException("This password has been compromised in data breaches");
+            if (response.getStatusCode() == HttpStatus.OK
+                    && response.getBody().contains(suffix)) {
+                throw new PasswordCompromisedException("This password " +
+                        "has been compromised in data breaches");
             }
         } catch (Exception e) {
             logger.error("Error checking password with HIBP API: {}", e.getMessage());
-            // Можно продолжить регистрацию, если сервис недоступен
+
         }
     }
 

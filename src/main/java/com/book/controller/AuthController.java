@@ -25,7 +25,7 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest,
                                       BindingResult bindingResult) {
 
-        // Валидация вручную (для JSON)
+        // Валид для Json
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             bindingResult.getFieldErrors().forEach(error ->

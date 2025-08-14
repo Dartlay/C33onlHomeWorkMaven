@@ -18,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +41,7 @@ public class ReadingController {
     private final UserRepository userRepository;
 
     @Value("${file.upload-dir}")
-    private String uploadDir;
+    private String uploadDir; //выгрузка
 
     @GetMapping("/{id}")
     public String readBook(
@@ -52,20 +51,20 @@ public class ReadingController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            // Проверка аутентификации через сессию
+            // Проверка через сессию
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("token") == null) {
                 redirectAttributes.addAttribute("redirect", "/read/" + id);
                 return "redirect:/login";
             }
 
-            // Проверка токена
+            // чек токена
             String token = (String) session.getAttribute("token");
             if (!tokenProvider.validateToken(token)) {
                 return "redirect:/login";
             }
 
-            // Получаем пользователя
+            // Получаем юзера
             String username = tokenProvider.getUsernameFromJWT(token);
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -74,7 +73,7 @@ public class ReadingController {
             model.addAttribute("book", book);
             model.addAttribute("bookTitle", book.getTitle());
 
-            // Определение типа файла
+            // тип файла
             String filePath = book.getFilePath();
             if (filePath == null) {
                 throw new IOException("Файл книги не найден");
@@ -83,26 +82,28 @@ public class ReadingController {
             String lowerCasePath = filePath.toLowerCase();
 
             if (lowerCasePath.endsWith(".txt")) {
-                // Обработка TXT файлов
+                // Обработка тхт файлов
                 Path fullPath = Paths.get(uploadDir).resolve(filePath).normalize();
                 String content = Files.readString(fullPath, StandardCharsets.UTF_8);
                 model.addAttribute("isTxt", true);
                 model.addAttribute("textContent", content);
                 return "text-reader";
-
+                // других форматы
             } else {
-                // Для всех других форматов
-                model.addAttribute("isTxt", false);
-                return "text-reader"; // Используем тот же шаблон, но с сообщением о неподдерживаемом формате
-            }
 
+                model.addAttribute("isTxt", false);
+                return "text-reader"; //формат не тот
+            }
+            // ошибки
         } catch (IOException e) {
             log.error("Ошибка чтения файла книги ID: {}", id, e);
-            redirectAttributes.addFlashAttribute("error", "Ошибка при загрузке файла книги");
+            redirectAttributes.addFlashAttribute("error",
+                    "Ошибка при загрузке файла книги");
             return "redirect:/book";
         } catch (Exception e) {
             log.error("Ошибка при открытии книги ID: {}", id, e);
-            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error",
+                    "Ошибка: " + e.getMessage());
             return "redirect:/book";
         }
     }
@@ -112,7 +113,7 @@ public class ReadingController {
             @PathVariable Long id,
             @RequestParam String token) throws IOException {
 
-        // Проверка токена
+        // чекаем токена
         if (!tokenProvider.validateToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -137,7 +138,7 @@ public class ReadingController {
             @PathVariable Long id,
             @RequestParam String token) throws IOException {
 
-        // Проверка токена
+        // чекаем токена
         if (!tokenProvider.validateToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

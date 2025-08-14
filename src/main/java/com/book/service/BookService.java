@@ -27,17 +27,17 @@ public class BookService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    // Метод для поиска книг
+    // поиск книг
     public List<Book> searchBooks(String query) {
         return bookRepository.searchBooks(query);
     }
 
-    // Метод для фильтрации книг
+    //  фильтрация книг
     public List<Book> filterBooks(Long genreId) {
         return bookRepository.filterBooks(genreId);
     }
 
-    // Получение всех жанров для фильтра
+    //  жанроы для фильтра
     public List<Genre> getAllGenres() {
         return genreRepository.findAll();
     }

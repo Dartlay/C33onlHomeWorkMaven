@@ -35,20 +35,20 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // Изменяем на stateful сессии
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Админка
                         .requestMatchers("/api/books/**").authenticated()
                         .requestMatchers(
                                 "/", "/login", "/register", "/static/**",
                                 "/css/**", "/js/**", "/img/**", "/favicon.ico",
                                 "/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**",
                                 "/register-success", "/book", "/top10", "/newest", "/read/**"
-                        ).permitAll()
+                        ).permitAll() // Досутп всем
                         .requestMatchers("/library", "/add-to-library", "/remove-from-library").authenticated()
+                        // только кто вошел
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout

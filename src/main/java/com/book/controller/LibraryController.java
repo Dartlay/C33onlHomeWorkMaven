@@ -46,6 +46,7 @@ public class LibraryController {
         return ResponseEntity.ok(library);
     }
 
+    //передаем айдишник книги
     @PostMapping("/{bookId}")
     @Operation(summary = "Add book to library",
             description = "Add a book to the user's library")
@@ -68,6 +69,7 @@ public class LibraryController {
         }
     }
 
+    // убераем из библи
     @PostMapping("/remove-from-library")
     public String removeFromLibrary(
             @RequestParam Long bookId,

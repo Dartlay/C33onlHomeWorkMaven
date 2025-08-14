@@ -37,7 +37,6 @@ public class User {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    // Relationships
     @OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL)
     private List<Book> uploadedBooks;
 
@@ -62,7 +61,7 @@ public class User {
         }
     }
 
-    // Методы для Spring Security
+    // Spring Security
     public boolean isAdmin() {
         return this.role == Role.ADMIN;
     }

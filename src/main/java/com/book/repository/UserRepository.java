@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // Для аутентификации по username
+    // аутентификации  username
     Optional<User> findByUsername(String username);
 
     long countByRole(User.Role role);
@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailAndIdNot(String email, Long id);
 
-    // Для проверки уникальности при регистрации
+    // чек регестрации
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);

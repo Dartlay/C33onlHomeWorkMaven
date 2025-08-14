@@ -30,7 +30,6 @@ import java.security.Principal;
 public class AdminController {
     private final BookService bookService;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final AuthorService authorService;
     private final GenreService genreService;
 
@@ -100,11 +99,11 @@ public class AdminController {
 
         Book existingBook = bookService.findById(id);
 
-        // Обновляем автора
+        // Тут обновим автора
         Author author = authorService.findOrCreateAuthor(authorName);
         existingBook.setAuthor(author);
 
-        // Обновляем жанр
+        // а тут обновим жанр
         Genre genre = genreService.findOrCreateGenre(genreName);
         existingBook.setGenre(genre);
 
@@ -137,6 +136,7 @@ public class AdminController {
         return "admin/users/delete";
     }
 
+    // удаляем юзера
     @PostMapping("/users/delete/{id}")
     public String deleteUser(
             @PathVariable Long id,
@@ -144,19 +144,24 @@ public class AdminController {
             RedirectAttributes redirectAttributes) {
 
         if (!confirm) {
-            redirectAttributes.addFlashAttribute("error", "Deletion not confirmed");
+            redirectAttributes.addFlashAttribute("error",
+                    "Deletion not confirmed");
             return "redirect:/admin/users/delete/" + id;
         }
 
         try {
             userService.deleteUser(id);
-            redirectAttributes.addFlashAttribute("success", "User deleted successfully");
+            redirectAttributes.addFlashAttribute("success",
+                    "User deleted successfully");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error deleting user: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error",
+                    "Error deleting user: "
+                            + e.getMessage());
         }
         return "redirect:/admin/users";
     }
 
+    // меняем юзера
     @GetMapping("/users/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         UserDTO user = userService.getUserById(id);
@@ -177,9 +182,11 @@ public class AdminController {
 
         try {
             userService.updateUser(id, userDTO);
-            redirectAttributes.addFlashAttribute("success", "User updated successfully");
+            redirectAttributes.addFlashAttribute("success",
+                    "User updated successfully");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error updating user: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error updating user: "
+                    + e.getMessage());
         }
         return "redirect:/admin/users";
     }

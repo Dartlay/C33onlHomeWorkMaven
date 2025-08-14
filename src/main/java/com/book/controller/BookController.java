@@ -38,7 +38,7 @@ public class BookController {
 
 
     @Value("${file.upload-dir}")
-    private String uploadDir; // Получаем из конфигурации
+    private String uploadDir; // Конфиг
 
     @GetMapping
     public List<Book> getAllBooks() {
@@ -51,12 +51,12 @@ public class BookController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam String token) throws IOException {
 
-        // Проверяем токен
+        // чекаем токен
         if (!tokenProvider.validateToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Получаем пользователя из токена
+        // получаем юзера из токена
         String username = tokenProvider.getUsernameFromJWT(token);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -134,10 +134,11 @@ public class BookController {
         }
 
         return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG) // или MediaType.IMAGE_PNG в зависимости от формата
+                .contentType(MediaType.IMAGE_JPEG) //Картинка от формата
                 .body(resource);
     }
 
+    // не забудь сделать
     @GetMapping("/top")
     public ResponseEntity<List<Book>> getTop10Books() {
         return ResponseEntity.ok(bookService.getRandom10());

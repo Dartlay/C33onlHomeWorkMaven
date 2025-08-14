@@ -27,10 +27,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            // 1. Пробуем получить токен из куки
+            // пробуем куки
             String jwt = getJwtFromRequest(request);
 
-            // 2. Если нет в куках, проверяем сессию
+            // если нет чекаем сессию
             if (jwt == null) {
                 HttpSession session = request.getSession(false);
                 if (session != null) {
@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Authentication authentication = tokenProvider.getAuthentication(jwt);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                // Обновляем сессию, если нужно
+                // апдейтим
                 request.getSession().setAttribute("token", jwt);
             }
         } catch (Exception ex) {
@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
-        // 1. Проверяем cookie
+        // чек куки
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // 2. Проверяем заголовок (на всякий случай)
+        //  чек заголовока
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
