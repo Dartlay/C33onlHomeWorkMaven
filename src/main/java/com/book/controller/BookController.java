@@ -103,10 +103,22 @@ public class BookController {
     }
 
     @GetMapping("/{id}/download")
-    public ResponseEntity<Resource> downloadBook(@PathVariable Long id) throws IOException {
+    public ResponseEntity<Resource> downloadBook(
+            @PathVariable Long id,
+            @RequestParam String token) throws IOException {
+
+
+        if (!tokenProvider.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+
         Book book = bookService.findById(id);
+
+
         Path filePath = Paths.get(uploadDir).resolve(book.getFilePath()).normalize();
         Resource resource = new UrlResource(filePath.toUri());
+
 
         if (!resource.exists()) {
             throw new RuntimeException("File not found " + book.getFilePath());

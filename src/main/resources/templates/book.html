@@ -158,9 +158,6 @@
                     <a class="nav-link" href="/newest">Новинки</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/top10">Топ 10</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="/library">Библиотека</a>
                 </li>
             </ul>
@@ -251,13 +248,17 @@
                     Описание книги...
                 </p>
                 <div class="d-flex flex-wrap">
-                    <a th:href="@{'/read/' + ${book.id}}"
-                       th:if="${book.filePath != null}"
+                    <a th:href="@{'/read/' + ${book.id} + '?token=' + ${session.token}}"
+                       th:if="${book.filePath != null && #strings.endsWith(book.filePath.toLowerCase(), '.txt')}"
                        class="btn btn-primary action-btn">
                         Читать онлайн
                     </a>
-                    <a th:href="@{/api/books/{id}/download(id=${book.id})}"
-                       class="btn btn-outline-secondary action-btn">Скачать</a>
+
+                    <!-- Скачивание -->
+                    <a th:href="@{'/api/books/' + ${book.id} + '/download?token=' + ${session.token}}"
+                       class="btn btn-outline-secondary action-btn">
+                        Скачать
+                    </a>
                     <form th:if="${isAuthenticated}"
                           th:action="@{/add-to-library}"
                           method="post"

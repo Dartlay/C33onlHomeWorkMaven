@@ -36,10 +36,11 @@
         <a th:href="@{/book}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Назад к каталогу
         </a>
-        <a th:href="@{'/read/' + ${book.id} + '/download?token=' + ${token}}"
-           class="btn btn-outline-primary">
+        <a th:href="@{'/api/books/' + ${book.id} + '/download?token=' + ${session.token}}"
+           class="btn btn-primary mt-3">
             <i class="bi bi-download"></i> Скачать книгу
         </a>
+
     </div>
 
     <h2 class="text-center mb-4" th:text="${bookTitle}">Название книги</h2>
@@ -53,8 +54,8 @@
     <div th:unless="${isTxt}" class="alert alert-info text-center mt-5">
         <h4><i class="bi bi-exclamation-circle"></i> Этот формат книги пока не поддерживает онлайн-чтение</h4>
         <p class="mt-3">Вы можите пока только скачать.</p>
-        <a th:href="@{'/read/' + ${book.id} + '/download?token=' + ${token}}"
-           class="btn btn-primary mt-3">
+        <a th:href="@{'/read/' + ${book.id} + '/download?token=' + ${session.token}}"
+           class="btn btn-outline-primary">
             <i class="bi bi-download"></i> Скачать книгу
         </a>
     </div>

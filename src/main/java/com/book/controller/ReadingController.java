@@ -87,6 +87,7 @@ public class ReadingController {
                 String content = Files.readString(fullPath, StandardCharsets.UTF_8);
                 model.addAttribute("isTxt", true);
                 model.addAttribute("textContent", content);
+                model.addAttribute("token", token);
                 return "text-reader";
                 // других форматы
             } else {

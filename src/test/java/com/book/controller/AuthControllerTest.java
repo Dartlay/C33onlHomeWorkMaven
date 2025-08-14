@@ -3,7 +3,6 @@ package com.book.controller;
 import com.book.dto.AuthResponse;
 import com.book.dto.LoginRequest;
 import com.book.dto.RegisterRequest;
-import com.book.model.User;
 import com.book.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
