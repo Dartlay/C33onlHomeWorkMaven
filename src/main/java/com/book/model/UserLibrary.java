@@ -1,6 +1,7 @@
 package com.book.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,13 +18,11 @@ public class UserLibrary {
     private UserLibraryId id;
 
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
     @ManyToOne
-    @MapsId("bookId")
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
     private Book book;
 
     @CreationTimestamp
@@ -33,9 +32,10 @@ public class UserLibrary {
     @Column(name = "last_read_page")
     private Integer lastReadPage = 1;
 
+    @Embeddable
     @Data
     @NoArgsConstructor
-    @Embeddable
+    @AllArgsConstructor
     public static class UserLibraryId implements Serializable {
         @Column(name = "user_id")
         private Long userId;

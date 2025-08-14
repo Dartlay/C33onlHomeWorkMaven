@@ -4,6 +4,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.SecretKey;
 import java.util.Base64;
@@ -16,6 +18,11 @@ public class OnlineLibraryApplication {
         generateJwtSecret();
 
         SpringApplication.run(OnlineLibraryApplication.class, args);
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     private static void generateJwtSecret() {

@@ -35,29 +35,28 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // Изменяем на stateful сессии
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/books/**").authenticated()
                         .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/login",
-                                "/login.html",
-                                "/register",
-                                "/register.html",
-                                "/static/**",
-                                "/css/**",
-                                "/js/**",
-                                "/img/**",
-                                "/favicon.ico",
-                                "/api/auth/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/register", "/register.html",
-                                "/register-success"
-
+                                "/", "/login", "/register", "/static/**",
+                                "/css/**", "/js/**", "/img/**", "/favicon.ico",
+                                "/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**",
+                                "/register-success", "/book", "/top10", "/newest", "/read/**"
                         ).permitAll()
+                        .requestMatchers("/library", "/add-to-library", "/remove-from-library").authenticated()
                         .anyRequest().authenticated()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/book")
+                        .deleteCookies("JSESSIONID", "jwtToken")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                 )
                 .addFilterBefore(
                         new JwtAuthenticationFilter(tokenProvider),
@@ -65,18 +64,18 @@ public class SecurityConfig {
                 );
 
         return http.build();
+
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // Разрешаем все origins для разработки
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:8080"));
+        config.setAllowedMethods(List.of("*"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 

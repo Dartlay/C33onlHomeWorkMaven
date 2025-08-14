@@ -3,6 +3,7 @@ package com.book.service;
 import com.book.dto.UserDTO;
 import com.book.model.User;
 import com.book.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,27 +22,52 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return UserDTO.fromUser(user);
     }
 
-    public void blockUser(Long id) {
+    @Transactional
+    public void updateUser(Long id, UserDTO userDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        user.setEnabled(false);
+
+        // Проверки уникальности
+        if (userRepository.existsByUsernameAndIdNot(userDTO.getUsername(), id)) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (userRepository.existsByEmailAndIdNot(userDTO.getEmail(), id)) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setRole(User.Role.valueOf(userDTO.getRole()));
+        user.setEnabled(userDTO.isEnabled());
+
         userRepository.save(user);
     }
 
-    public void unblockUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        user.setEnabled(true);
-        userRepository.save(user);
-    }
 
+    @Transactional
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // Дополнительные проверки, если нужно
+        if (user.getRole() == User.Role.ADMIN) {
+            long adminCount = userRepository.countByRole(User.Role.ADMIN);
+            if (adminCount <= 1) {
+                throw new IllegalStateException("Cannot delete the last admin");
+            }
+        }
+
+        userRepository.delete(user);
     }
 }

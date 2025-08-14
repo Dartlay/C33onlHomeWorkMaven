@@ -118,4 +118,16 @@
     --variable-collection-g500: rgba(104, 102, 119, 1);
     --variable-collection-white: rgba(255, 255, 255, 1);
     --variable-collection-g300: rgba(203, 202, 215, 1);
+    --frame: rgba(255, 255, 255, 1);
+    --mine-sharft: rgba(45, 45, 45, 1);
+    --auth-primary: var(--ungu); /* Фиолетовый для основных кнопок */
+    --auth-secondary: var(--orange); /* Оранжевый для второстепенных */
+    --auth-text-light: var(--putih); /* Белый текст */
+    --auth-text-dark: var(--mine-sharft); /* Темный текст */
+    --auth-border: var(--gray-300); /* Границы */
+    --auth-error: #ff4e4c; /* Цвет ошибок (из .frame) */
+    --auth-btn-height: 38px;
+    --auth-btn-radius: 100px;
+    --auth-avatar-size: 38px;
+
 }

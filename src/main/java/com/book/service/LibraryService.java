@@ -34,16 +34,26 @@ public class LibraryService {
         }
 
         UserLibrary libraryEntry = new UserLibrary();
+        libraryEntry.setId(new UserLibrary.UserLibraryId(user.getId(), bookId));
         libraryEntry.setUser(user);
         libraryEntry.setBook(book);
         libraryRepository.save(libraryEntry);
     }
 
+    public boolean isBookInUserLibrary(Long bookId, User user) {
+        return libraryRepository.existsByUserAndBook(user,
+                bookRepository.findById(bookId).orElse(null));
+    }
+
     @Transactional
     public void removeFromLibrary(Long bookId, User user) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
-        libraryRepository.deleteByUserAndBook(user, book);
+                .orElseThrow(() -> new RuntimeException("Книга не найдена"));
+
+        UserLibrary libraryEntry = libraryRepository.findByUserAndBook(user, book)
+                .orElseThrow(() -> new RuntimeException("Книга не найдена в вашей библиотеке"));
+
+        libraryRepository.delete(libraryEntry);
     }
 
     @Transactional

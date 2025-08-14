@@ -13,16 +13,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Для аутентификации по username
     Optional<User> findByUsername(String username);
 
-    // Для аутентификации по email
-    Optional<User> findByEmail(String email);
+    long countByRole(User.Role role);
+
+    boolean existsByUsernameAndIdNot(String username, Long id);
+
+    boolean existsByEmailAndIdNot(String email, Long id);
 
     // Для проверки уникальности при регистрации
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
 
-    // Дополнительные методы для админ-панели
-    List<User> findAllByRole(User.Role role);
-
-    List<User> findAllByEnabled(boolean enabled);
 }

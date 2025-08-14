@@ -13,17 +13,15 @@ import java.util.UUID;
 public class FileStorageService {
 
     public String store(MultipartFile file, String uploadDir) throws IOException {
-        // Создаем директорию, если не существует
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        // Генерируем уникальное имя файла
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         Path filePath = uploadPath.resolve(fileName);
 
-        // Сохраняем файл
+       
         Files.copy(file.getInputStream(), filePath);
 
         return fileName;

@@ -25,19 +25,7 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
-
-    @PatchMapping("/{id}/block")
-    public ResponseEntity<Void> blockUser(@PathVariable Long id) {
-        userService.blockUser(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("/{id}/unblock")
-    public ResponseEntity<Void> unblockUser(@PathVariable Long id) {
-        userService.unblockUser(id);
-        return ResponseEntity.ok().build();
-    }
-
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);

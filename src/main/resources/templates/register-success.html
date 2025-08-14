@@ -44,4 +44,15 @@
     <a th:href="@{/login}" class="btn btn-dark w-100 btn-continue">Перейти к входу</a>
 </div>
 </body>
+<script>
+    // Проверяем, есть ли токен
+    if (!localStorage.getItem('jwtToken')) {
+        window.location.href = '/register';
+    } else {
+        // Перенаправляем через 3 секунды
+        setTimeout(() => {
+            window.location.href = '/book';
+        }, 3000);
+    }
+</script>
 </html>

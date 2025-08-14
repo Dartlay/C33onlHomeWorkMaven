@@ -4,193 +4,62 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>iA.Book - Вход</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Блокировка скролла */
-        body {
-            overflow: hidden;
-            height: 100vh;
-            background-color: #f5f5f5;
-        }
-
-        /* Основной контейнер */
-        .main-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-        }
-
-        /* Левая часть - форма */
-        .form-section {
-            position: absolute;
-            width: 720px;
-            height: 100%;
-            left: 0;
-            top: 0;
-            padding: 64px 100px;
-        }
-
-        /* Кнопка Назад */
-        .back-button {
-            position: absolute;
-            top: 64px;
-            left: 100px;
-            display: flex;
-            align-items: center;
-            background: none;
-            border: none;
-            padding: 0;
-        }
-
-        /* Логотип */
-        .logo {
-            display: flex;
-            align-items: center;
-            margin-bottom: 60px;
-        }
-
-        /* Форма */
-        .form-container {
-            width: 528px;
-        }
-
-        /* Поля ввода */
-        .input-field {
-            border-radius: 100px;
-            padding: 12px 20px;
-            height: 50px;
-        }
-
-        /* Кнопка входа */
-        .login-btn {
-            border-radius: 100px;
-            height: 50px;
-        }
-
-        /* Правая часть - изображение */
-        .image-section {
-            position: absolute;
-            width: 720px;
-            height: 100%;
-            right: 0;
-            top: 0;
-            background-size: cover;
-            background-position: center;
-            border-radius: 60px 0 0 60px;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 1200px) {
-            .form-section {
-                padding: 64px 50px;
-            }
-
-            .form-container {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .image-section {
-                display: none;
-            }
-
-            .form-section {
-                width: 100%;
-                padding: 64px 20px;
-            }
-
-            .back-button {
-                left: 20px;
-                top: 20px;
-            }
-        }
-    </style>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/globals.css" rel="stylesheet">
 </head>
 <body>
-<div class="main-container">
-    <!-- Кнопка Назад -->
-    <button class="back-button">
+<div class="auth-container">
+    <!-- Назад -->
+    <button class="auth-back-btn" onclick="window.location.href='/'">
         <img th:src="@{/img/vector-10.svg}" alt="Назад" class="me-2" width="20">
-        <span class="fw-medium">Назад</span>
+        <span>Назад</span>
     </button>
-
-    <!-- Левая часть - форма -->
-    <div class="form-section">
-        <div class="logo">
-            <img th:src="@{/img/vector.svg}" alt="Логотип" class="me-3" width="30">
-            <h1 class="h3 mb-0 fw-bold">iA.Book</h1>
+    <div class="auth-form-section">
+        <div class="auth-logo">
+            <img th:src="@{/img/vector.svg}" alt="Логотип" width="30">
+            <h1>iA.Book</h1>
         </div>
 
-        <!-- Сообщение об ошибке -->
-        <div th:if="${param.error}" class="alert alert-danger mb-4">
+        <!-- Ошибки -->
+        <div th:if="${param.error}" class="auth-error-message">
             Неверный логин или пароль
         </div>
 
-        <div class="form-container">
-            <!-- Заголовок -->
-            <div class="mb-4">
-                <h2 class="h4 fw-semibold mb-3">Добро пожаловать в iA.Book</h2>
-                <p class="text-muted">Пожалуйста, введите ваши данные для входа</p>
-            </div>
-
-            <!-- Форма входа -->
-            <form th:action="@{/api/auth/login}" method="post">
-                <!-- Поле логина -->
-                <div class="mb-4">
-                    <label for="username" class="form-label text-muted">Логин</label>
-                    <input type="text" class="form-control input-field"
-                           id="username" name="username" placeholder="Daphne Smith" required>
-                </div>
-
-                <!-- Поле пароля -->
-                <div class="mb-4 position-relative">
-                    <label for="password" class="form-label text-muted">Пароль</label>
-                    <input type="password" class="form-control input-field"
-                           id="password" name="password" placeholder="**************" required>
-                    <span class="position-absolute"
-                          style="right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
-                        <img th:src="@{/img/eye-disable.svg}" alt="Показать пароль" width="20" id="togglePassword">
-                    </span>
-                </div>
-
-                <!-- Кнопка входа -->
-                <button type="submit" class="btn btn-dark w-100 login-btn mb-3">
-                    Войти
-                </button>
-
-                <!-- Ссылка на регистрацию -->
-                <p class="text-muted text-center">
-                    Нет аккаунта?
-                    <a th:href="@{/register}"
-                       class="text-primary fw-semibold text-decoration-none">Зарегистрироваться</a>
-                </p>
-            </form>
+        <div class="auth-header">
+            <h2>Добро пожаловать в iA.Book</h2>
+            <p>Пожалуйста, введите ваши данные для входа</p>
         </div>
+
+        <!-- Форма входа -->
+        <form th:action="@{/login}" method="post">
+            <!-- Поле логина -->
+            <div class="auth-input-group">
+                <label for="username" class="auth-input-label">Логин</label>
+                <input type="text" class="auth-input-field"
+                       id="username" name="username" placeholder="Daphne Smith" required>
+            </div>
+            <!-- Поле пароля -->
+            <div class="auth-input-group">
+                <label for="password" class="auth-input-label">Пароль</label>
+                <input type="password" class="auth-input-field"
+                       id="password" name="password" placeholder="**************" required>
+            </div>
+            <!-- Кнопка входа -->
+            <input type="hidden" name="redirect" th:value="${param.redirect} ?: ''">
+            <button type="submit" class="auth-submit-btn">Войти</button>
+            <!-- Регистрация -->
+            <p class="auth-switch-form">
+                Нет аккаунта?
+                <a th:href="@{/register}" class="text-primary">Зарегистрироваться</a>
+            </p>
+        </form>
     </div>
 
-    <!-- Правая часть - изображение -->
-    <div class="image-section" style="background-image: url('/img/03-sky-2.png');"></div>
+    <!-- ФОНН -->
+    <div class="auth-image-section" style="background-image: url('/img/03-sky-2.png');"></div>
 </div>
 
-<!-- Bootstrap JS + Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Переключение видимости пароля
-    document.getElementById('togglePassword').addEventListener('click', function () {
-        const passwordInput = document.getElementById('password');
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-        } else {
-            passwordInput.type = 'password';
-        }
-    });
-
-    // Обработка кнопки "Назад"
-    document.querySelector('.back-button').addEventListener('click', function () {
-        window.location.href = '/';
-    });
-</script>
 </body>
 </html>
