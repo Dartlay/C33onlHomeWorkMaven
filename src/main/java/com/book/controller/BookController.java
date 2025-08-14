@@ -167,6 +167,20 @@ public class BookController {
             @RequestPart MultipartFile file,
             @RequestPart(required = false) MultipartFile cover,
             @AuthenticationPrincipal User user) throws IOException {
-        return bookService.saveBook(book, file, cover, user);
+
+        if (file == null) {
+            throw new IllegalArgumentException("Book file is required");
+        }
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("Book file cannot be empty");
+        }
+
+        try {
+            return bookService.saveBook(book, file, cover, user);
+        } catch
+        (IOException e) {
+            log.error("Failed to save book file", e);
+            throw e;
+        }
     }
 }

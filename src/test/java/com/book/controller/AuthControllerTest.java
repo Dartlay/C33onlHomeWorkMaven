@@ -12,11 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import java.util.Collections;
 import java.util.Map;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,6 +36,7 @@ class AuthControllerTest {
     @InjectMocks
     private AuthController authController;
 
+
     private RegisterRequest registerRequest;
     private LoginRequest loginRequest;
 
@@ -50,12 +53,43 @@ class AuthControllerTest {
     }
 
     @Test
+
+    public void loginWithValidCredentials_ShouldReturnOk() {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername("trueUser");
+        loginRequest.setPassword("truePassword");
+
+        AuthResponse mockResponse = new AuthResponse("token", "validUser", "ROLE_USER");
+        when(authService.login(loginRequest.getUsername(), loginRequest.getPassword()))
+                .thenReturn(mockResponse);
+        ResponseEntity<AuthResponse> response = authController.login(loginRequest);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(mockResponse, response.getBody());
+        verify(authService).login(loginRequest.getUsername(), loginRequest.getPassword());
+    }
+
+    @Test
+    public void loginWithInvalidCredentials_ShouldThrowException() {
+
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername("falseUser");
+        loginRequest.setPassword("falsePassword");
+
+        when(authService.login(loginRequest.getUsername(), loginRequest.getPassword()))
+                .thenThrow(new BadCredentialsException("Invalid credentials"));
+
+        assertThrows(BadCredentialsException.class, () -> {
+            authController.login(loginRequest);
+        });
+    }
+
+
+    @Test
     void register_ValidRequest_ReturnsOk() {
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(authService.register(any())).thenReturn(new AuthResponse("token", "testuser", "USER"));
-
+        when(authService.register(any())).thenReturn(new AuthResponse("token",
+                "testuser", "USER"));
         ResponseEntity<?> response = authController.register(registerRequest, bindingResult);
-
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody() instanceof AuthResponse);
     }
@@ -63,21 +97,19 @@ class AuthControllerTest {
     @Test
     void register_InvalidRequest_ReturnsBadRequest() {
         when(bindingResult.hasErrors()).thenReturn(true);
-        FieldError fieldError = new FieldError("registerRequest", "username", "Username is required");
+        FieldError fieldError = new FieldError("registerRequest", "username",
+                "Username is required");
         when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
-
         ResponseEntity<?> response = authController.register(registerRequest, bindingResult);
-
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody() instanceof Map);
     }
 
     @Test
     void login_ValidRequest_ReturnsOk() {
-        when(authService.login(any(), any())).thenReturn(new AuthResponse("token", "testuser", "USER"));
-
+        when(authService.login(any(), any())).thenReturn(new AuthResponse("token",
+                "testuser", "USER"));
         ResponseEntity<AuthResponse> response = authController.login(loginRequest);
-
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("token", response.getBody().getToken());

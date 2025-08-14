@@ -47,6 +47,39 @@ class LibraryServiceTest {
     }
 
     @Test
+    public void addBookToLibrary_ShouldSuccess() {
+        Long bookId = 1L;
+        User user = new User();
+        user.setId(1L);
+
+        Book book = new Book();
+        book.setId(bookId);
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+        when(libraryRepository.existsByUserAndBook(user, book)).thenReturn(false);
+
+
+        libraryService.addToLibrary(bookId, user);
+
+
+        verify(libraryRepository).save(any(UserLibrary.class));
+    }
+
+    @Test
+    public void removeNonExistentBookFromLibrary_ShouldThrowException() {
+        Long bookId = 999L;
+        User user = new User();
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> {
+            libraryService.removeFromLibrary(bookId, user);
+        });
+
+        verify(libraryRepository, never()).delete(any());
+    }
+
+    @Test
     void getUserLibrary_ReturnsUserBooks() {
         UserLibrary libraryEntry = new UserLibrary();
         libraryEntry.setUser(testUser);
